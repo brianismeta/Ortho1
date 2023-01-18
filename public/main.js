@@ -405,7 +405,7 @@ window.addEventListener("load", ()=>
   });
     
   if (playButton) playButton.addEventListener("click",() => {
-    location.href = "orthoverse.html";
+    alert("Not implemented!");//location.href = "orthoverse.html";
   });
     if (orthoButton) orthoButton.addEventListener("click", ()=> {
 //    AddOrthoTokenToWallet();
