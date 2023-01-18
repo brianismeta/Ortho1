@@ -1,0 +1,72 @@
+*
+{
+	margin: 0;
+	padding: 0;
+}
+body {
+	font-family: sans-serif;
+}
+#nav-bar {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+.navbar {
+	background-image: linear-gradient(to right, #a517ba, #5f1782);
+	padding: 0 !important;
+}
+.navbar-nav li {
+	padding: 0 10px;
+}
+.navbar-nav li a {
+	color: #fff !important;
+	font-weight: 600;
+	float: right;
+	text-align: left;
+	
+}
+.fa-bars {
+	color: #fff;
+	font-size: 30px !important;
+}
+.navbar-toggler {
+	outline: none !important;
+}
+/*------------------- banner ------------------- */
+#banner {
+	/*background-image: url("pexels-amine-mayoufi-3069334.jpg");*/ 
+    background-image: linear-gradient(to right, #a517ba, #5f1782);
+    padding-top: 5%;
+	color: #fff;
+    /*background-attachment: scroll;
+    background-size: 10%;*/
+
+}
+.promo-title {
+font-size: 40px;
+font-weight: 100;
+/* margin-top: 100px; */
+font-family: 'Ubuntu';
+}
+.promo-subtext {
+    font-size: 20px;
+    font-style: italic;
+}
+    .play-btn {
+width: 45px;
+margin: 20px;
+}
+#banner a {
+	color: #fff;
+	text-decoration: none;
+}
+.card-title {
+    color: #000;
+
+}
+.card-text {
+    color: #000;
+}
+.foxgif {
+    width: 20px;
+}

@@ -1,0 +1,229 @@
+.iphone14-1
+{
+position:absolute;
+background-color:#ffffff;
+height:844px;
+width:390px;
+padding:0px;
+}
+.connectframe
+{
+background-color:#e6fbf8;
+height:60px;
+width:390px;
+padding:0px;
+display:flex;
+flex-direction:column;
+flex-wrap:nowrap;
+align-items:center;
+justify-content:center;
+position:absolute;
+top:180px;
+left:0px;
+}
+.walletconnected:0x00000000000000000000
+{
+color:#3742fa;
+text-align:center;
+vertical-align:text-top;
+font-size:10px;
+font-family:Lato;
+align-self:flex-start;
+top:35px;
+left:0px;
+position:absolute;
+line-height:100px;
+border-style:hidden;
+outline:none;
+width:390px;
+}
+.button
+{
+background-color:#3742fa;
+height:16px;
+width:105px;
+filter:drop-shadow(0px 2px 4px rgba(0.5333333611488342,0.5647059082984924,0.7607843279838562,0.20000000298023224));
+align-self:flex-start;
+left:142px;
+top:15px;
+position:absolute;
+border-radius:4px;
+padding-left:32px;
+padding-right:32px;
+padding-top:16px;
+padding-bottom:16px;
+display:flex;
+flex-direction:row;
+justify-content:center;
+align-items:center;
+gap:10px;
+}
+.connectwallet
+{
+color:#ffffff;
+text-align:left;
+vertical-align:text-top;
+font-size:10px;
+font-family:Lato;
+align-self:flex-start;
+left:20px;
+top:3px;
+position:absolute;
+width:65px;
+height:10px;
+line-height:100px;
+border-style:hidden;
+outline:none;
+}
+.introframe
+{
+background-color:#fee6ff;
+/* height:120px; */
+width:100%;
+padding:0px;
+display:flex;
+flex-direction:column;
+flex-wrap:nowrap;
+align-items:center;
+justify-content:center;
+padding-top:30px;
+}
+.slidinginformation
+{
+background-color:#d9d9d9;
+/* height:50px; */
+width:40%;
+margin-bottom: 50px;
+margin-top:30px;
+}
+.metameowgames
+{
+color:#000000;
+text-align:center;
+vertical-align:text-top;
+font-size:24px;
+font-family:Inter;
+align-self:flex-start;
+line-height:auto;
+border-style:hidden;
+outline:none;
+width:100%;
+margin-bottom: 50px;
+}
+.gamesframe
+{
+background-color:#f2ffe3;
+height:120px;
+width:390px;
+padding:0px;
+display:flex;
+flex-direction:column;
+flex-wrap:nowrap;
+align-items:center;
+justify-content:center;
+position:absolute;
+top:240px;
+left:0px;
+}
+.games3
+{
+color:#3742fa;
+text-align:center;
+vertical-align:text-middle;
+font-size:10px;
+font-family:Lato;
+line-height:100px;
+border-style:hidden;
+outline:none;
+width:390px;
+align-self:flex-start;
+}
+.topframe
+{
+background-color:#ffffff;
+height:60px;
+width:390px;
+padding:0px;
+display:flex;
+flex-direction:column;
+flex-wrap:nowrap;
+align-items:center;
+justify-content:center;
+position:absolute;
+top:0px;
+left:0px;
+}
+.catpicturescc0
+{
+background-color:#f88e8e;
+background-size: cover;
+height:150px;
+width:100%;
+background-image: url("pexels-amine-mayoufi-cats.jpg");
+background-position: center center;
+}
+.menubar
+{
+background-color:#8af4ee;
+height:29px;
+width:390px;
+}
+
+.carousel{
+    margin-top: 0px;
+    background-color:rgba(248, 248, 189, 0.924);
+    border:#000000 solid;
+}
+.carousel-inner {
+    height: 200px !important; 
+}
+.carousel-caption {
+    color: rgb(2, 92, 160) !important;
+    top: 50%;
+}
+@media (min-width: 576px)  {
+.carousel{
+    width:50% !important;
+}
+.carousel-inner {
+    height: 150px !important; 
+}
+}
+.arrow-color {
+    color:#000000;
+}
+.carousel-control-next,
+.carousel-control-prev /*, .carousel-indicators */ {
+    filter: invert(100%);
+}
+.foxgif {
+    width: 20px;
+}
+           /* height: auto;300px; */
+    /* border:#caeb36 solid;
+  }
+  .carousel-caption{
+    color: rgb(122, 54, 115) !important;
+    top: 50%;
+  }
+  .carousel-control.left, .carousel-control.right {
+    left: 0 !important;
+    z-index: 1 !important;
+  } */
+  .promo-title {
+    font-size: 40px;
+    font-weight: 100;
+    /* margin-top: 100px; */
+    font-family: 'Ubuntu';
+    text-align: center;
+    color:#ab0595;
+    }
+    .promo-subtext {
+        font-size: 20px;
+        font-style: italic;
+        text-align: center;
+        color:#c21543;
+    }
+    body {
+        background-color: #a6bfc7be !important;
+    }
