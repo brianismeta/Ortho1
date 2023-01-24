@@ -19,6 +19,7 @@ const orthoTokenContact = "0x118aed2606d02c2545c6d7d2d1021e567cc08922";
 const orthoTokenURI = "https://orthoverse.io/api/metadata/";
 
 const _connectStatus = {
+  NoMetamask: -1,
   NotConnected: 0,
   WrongChain: 1,
   Connected: 2,
@@ -186,19 +187,23 @@ const isMobile = () => {
 // });
 
 function softConnect() {
-  if (ethereum.isConnected() && (ethereum.selectedAddress != null)) {
-    if (ethereum.chainId == 0x01) {
-      connectStatus = _connectStatus.Connected;
-      //var level= getOrthoverseCastleLevel(0);
-  
-      return true;
-    } else {
-      connectStatus = _connectStatus.WrongChain;
-    }
-  } else {
-    connectStatus = _connectStatus.NotConnected;
-  }
-    return false;
+     if (typeof ethereum != 'undefined') {
+          if (ethereum.isConnected() && (ethereum.selectedAddress != null)) {
+          if (ethereum.chainId == 0x01) {
+               connectStatus = _connectStatus.Connected;
+               //var level= getOrthoverseCastleLevel(0);
+          
+               return true;
+          } else {
+               connectStatus = _connectStatus.WrongChain;
+          }
+          } else {
+          connectStatus = _connectStatus.NotConnected;
+          }
+     } else {
+          connectStatus = _connectStatus.NoMetamask;
+     }
+     return false;
 }
 function softAddress(fInclude0x = true) {
   if (ethereum.isConnected() && (ethereum.selectedAddress != null)) {
@@ -352,6 +357,13 @@ function RefreshButtonStatus() {
     if (switchButton) switchButton.classList.add("d-none");
     if (connectButton) connectButton.classList.add("d-none");
     if (revealButton) revealButton.classList.add("d-none");
+  } else if (connectStatus == _connectStatus.NoMetamask) {
+     if (walletID) walletID.innerHTML = 'No MetaMask detected! Please refresh your browser after installing the MetaMask plugin';
+     if (walletID) walletID.classList.remove("d-none");//.style.display="";
+     if (switchButton) switchButton.classList.add("d-none");
+     if (connectButton) connectButton.classList.add("d-none");
+     if (revealButton) revealButton.classList.add("d-none");
+ 
   }
 }
 
@@ -405,7 +417,8 @@ window.addEventListener("load", ()=>
   });
     
   if (playButton) playButton.addEventListener("click",() => {
-    alert("Not implemented!");//location.href = "orthoverse.html";
+    //alert("Not implemented!");
+    location.href = "orthopong.html";
   });
     if (orthoButton) orthoButton.addEventListener("click", ()=> {
 //    AddOrthoTokenToWallet();

@@ -1,0 +1,21 @@
+canvas{max-width:100%;max-height:98vh}
+body{text-align:center;color:#e8e8e8;background:#131313}
+pre{text-align:left}
+a{color:#e8e8e8}
+a:hover{color:red}
+
+@keyframes flicker{
+  0% {opacity:0}
+  59%{opacity:0}
+  60%{opacity:1}
+  79%{opacity:1}
+  80%{opacity:0}
+  99%{opacity:0}
+ 100%{opacity:1}
+}
+h1 span{animation: flicker 0.5s linear both;}
+@keyframes fade{
+  0% {opacity:0}
+ 100%{opacity:1}
+}
+#divHomeActionButtons p{animation: fade 2s linear 2s both;}
