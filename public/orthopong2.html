@@ -11,6 +11,22 @@
      <h1>Pong for the Orthoverse!</h1>
      <p>Challenge another Orthoverse player to an epic game of pong.</p>
      <p>Who will reign supreme?</p>
+          <div id=divHomeActionButtons>
+<p><button id="createBtn">Create Game</button>
+<p><button id="joinBtn1">Join Game</button>
+</div>
+
+<form id=divJoinBox style='display:none;padding:20px;'>
+<!-- Enter ID: <input id="conid" size=8> -->
+<br>Enter Invite Code: <input id="scpice" size="34">
+<button id="joinBtn2">Join</button>
+</form>
+
+<div id=divCreateGameOptions style='display:none'>
+<!-- <h2>ID: </h2> -->
+<br>Share this Invite Code: <input id="scpicehost" size="34">
+<p/>
+<p>
      Background: <select id="bkimg">
           <option value=1>1</option>
           <option value=2>2</option>
@@ -28,21 +44,8 @@
           <option value=14>14</option>
           <option value=15>15</option>
          </select>
-          <div id=divHomeActionButtons>
-<p><button id="createBtn">Create Game</button>
-<p><button id="joinBtn1">Join Game</button>
-</div>
-
-<form id=divJoinBox style='display:none;padding:20px;'>
-<!-- Enter ID: <input id="conid" size=8> -->
-<br>Enter Invite Code: <input id="scpice" size="34">
-<button id="joinBtn2">Join</button>
-</form>
-
-<div id=divCreateGameOptions style='display:none'>
-<!-- <h2>ID: </h2> -->
-<br>Share this Invite Code: <input id="scpicehost" size="34">
-<p/>
+     </p>
+     
 <div style="display: none">
 Buffer Size: <select id=bufsize>
  <option value=Auto>Auto</option>
@@ -56,8 +59,11 @@ Buffer Size: <select id=bufsize>
  <option value=8>8</option>
  <option value=9>9</option>
  <option value=10>10</option>
-</select><p>
+</select>
+<p>
 Difficulty: <span id=bspl></span><br><input id=ballspeed type=range min=2 max=20 value=2 oninput='bspl.textContent=this.value+" [ "+ ["boring","normal","crazy"][Math.floor(this.value/7)]+" ]"'>
+
+
 </div>
 </div>
 

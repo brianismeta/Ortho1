@@ -49,6 +49,8 @@ scoreLeft=0
 scoreRight=0
 
 ballStartSpeed=4;
+ballSpeedIncrement = 0.1;
+
 ball={x:0,y:-20,speed:0,hspeed:0,vspeed:0}
 
 function objcopy(o){
@@ -118,6 +120,7 @@ function resetBall(){
   ball.x=w/2
   ball.y=h/2
   ball.speed=ballStartSpeed
+  ball.speedIncrement = ballSpeedIncrement;
   ball.hspeed = Math.cos(angle)*ball.speed
   ball.vspeed = Math.sin(angle)*ball.speed
 }
@@ -190,8 +193,9 @@ setup = {
           bufferSize = (bufsize.value=="Auto") ? Math.min(5,Math.ceil(halftrip/frameLength)) : Number(bufsize.value);
           initBuffer()
           ballStartSpeed = Number(ballspeed.value)
-
-          send({type:"ACK", seed, bufferSize, ballStartSpeed})
+          // ballSpeedIncrement = Number(ballSpeedIncrement.value);
+          imgid = getBackgroundImage();
+          send({type:"ACK", seed, bufferSize, ballStartSpeed, imgid })
 
           // wait for half the roundtrip time before starting the first frame
           nextFrame = performance.now() + halftrip
@@ -202,6 +206,8 @@ setup = {
         seed=data.seed
         bufferSize = data.bufferSize
         ballStartSpeed = data.ballStartSpeed
+        // set background image
+        setBackgroundImage(data.imgid);
         nextFrame = performance.now()
         initBuffer()
         processFrame()
@@ -332,14 +338,14 @@ function processGameLogic(myInput,yoInput){
     // check for face collision with paddle
     if (Math.round(ball.x-ballSize/2) == Math.round(left.x+paddleW/2-1) && vcollision(left)) {
       //reflect based on position
-      ball.speed++
+      ball.speed = ball.speed + ball.speedIncrement;
       let angle = Math.atan2(ball.y-left.y, 15)
       ball.hspeed = Math.cos(angle)*ball.speed
       ball.vspeed = Math.sin(angle)*ball.speed
       ball.x++
     }
     else if (Math.round(ball.x+ballSize/2) == Math.round(right.x-paddleW/2+1) && vcollision(right)) {
-      ball.speed++
+      ball.speed = ball.speed + ball.speedIncrement;
       let angle = Math.atan2(ball.y-right.y, -15)
       ball.hspeed = Math.cos(angle)*ball.speed
       ball.vspeed = Math.sin(angle)*ball.speed
@@ -456,6 +462,16 @@ const imgs = [
      "pexels-rachel-claire-4819830.jpg",
      "pexels-rudolf-kirchner-831082.jpg"
 ];
+
+function getBackgroundImage() {
+     var imgid = document.getElementById("bkimg").value;
+     return imgid;
+}
+function setBackgroundImage(imgid) {
+     //var imgid = document.getElementById("bkimg").value;
+     document.body.style.backgroundImage = "url("+imgs[imgid]+")";
+     document.body.style.backgroundSize = "cover";
+}
 
 window.onload=window.onresize=function(){
   scaleFactor=Math.max(1,w/(window.innerWidth-16),h/(window.innerHeight*0.98))

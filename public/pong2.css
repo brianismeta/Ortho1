@@ -1,4 +1,8 @@
-canvas{max-width:100%;max-height:100%; }
+canvas{
+     max-width:80%;
+     max-height:80%; 
+     background-color: black;
+}
 html {
      height: 100%;
      

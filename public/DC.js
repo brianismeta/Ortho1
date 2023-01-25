@@ -87,8 +87,8 @@ function createRoom(setup) {
 
 function createRoom_ready(setup) {
      conn.on('data', function (data) {
-          console.log('Create room - conn data: ' + JSON.stringify(data));
-          addData("Data received");
+          //console.log('Create room - conn data: ' + JSON.stringify(data));
+          //addData("Data received");
           setup.onmessage(data);
           //       var cueString = "<span class=\"cueMsg\">Cue: </span>";
           //       switch (data.substr(0,5)) {
@@ -280,7 +280,7 @@ function _joinRoom(setup) {
            });
            // Handle incoming data (messages only since this is the signal sender)
            conn.on('data', function (data) {
-               console.log("Join room -conn data: " + JSON.stringify(data));
+               //console.log("Join room -conn data: " + JSON.stringify(data));
                setup.onmessage(data);
 
            });
@@ -477,7 +477,7 @@ DC.join = function (joinid, scpice, setup) {
 
 };
 DC.send = function(data){
-     DC.log("DC.send send data " + JSON.stringify(data));
+     //DC.log("DC.send send data " + JSON.stringify(data));
 
      //if (DC.dc && DC.dc.readyState=="open" && data) {
           conn.send(data);
