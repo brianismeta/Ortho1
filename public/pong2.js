@@ -53,6 +53,144 @@ ballSpeedIncrement = 0.1;
 
 ball={x:0,y:-20,speed:0,hspeed:0,vspeed:0}
 
+var yourwallet = "";
+var mywallet = "";
+const convertHexToDecimal = hex => parseInt(hex,16);
+const orthoTokenContact = "0x118aed2606d02c2545c6d7d2d1021e567cc08922";
+const orthoTokenURI = "https://orthoverse.io/api/metadata/";
+
+orthoverseHomeLand = document.getElementById("orthoverseHomeLand");
+orthoverseEnemyLand = document.getElementById("orthoverseEnemyLand");
+
+//var sOrthoverseLandInformation = "*";
+//var iOrthoverseCastleLevel = -1;
+
+const _connectStatus = {
+     NoMetamask: -1,
+     NotConnected: 0,
+     WrongChain: 1,
+     Connected: 2,
+     Authenticated: 3
+   };
+var connectStatus = _connectStatus.NotConnected;
+function softConnect() {
+     if (typeof ethereum != 'undefined') {
+          if (ethereum.isConnected() && (ethereum.selectedAddress != null)) {
+          if (ethereum.chainId == 0x01) {
+               connectStatus = _connectStatus.Connected;
+               //var level= getOrthoverseCastleLevel(0);
+          
+               return true;
+          } else {
+               connectStatus = _connectStatus.WrongChain;
+          }
+          } else {
+          connectStatus = _connectStatus.NotConnected;
+          }
+     } else {
+          connectStatus = _connectStatus.NoMetamask;
+     }
+     return false;
+}
+function softAddress(fInclude0x = true) {
+     if (ethereum.isConnected() && (ethereum.selectedAddress != null)) {
+       return ethereum.selectedAddress.substr(fInclude0x?0:2);
+     }
+     else
+       return "Not Connected";
+   
+   }
+   function ShowLand(walletAddress, fHome) {
+     console.log("Show Land for wallet " + walletAddress + " home(1/0) " + fHome + " host(1/0) " + host);
+     var orthoverseJSON = "";
+     var zero24 = "000000000000000000000000";
+     var params = [
+       {
+         //from: softAddress(),
+         to: orthoTokenContact,
+         //'4-byte function hash followed by address',
+         data: "0x0e89341c" + zero24 + walletAddress,
+       }
+     ];
+     
+     ethereum
+       .request({
+         method: 'eth_call',
+         params,
+         id: '1'
+       })
+       .then((result) => {
+         // Good result returns null in this case
+         console.log("Good: " +result);
+   
+         // Using the decodeURIComponent function in combination with regex to convert the hex value into utf8 value
+         var sOrthoverseLandInformation = decodeURIComponent(
+           result.substr(130).replace(/\s+/g, "").replace(/[0-9a-f]{2}/g, "%$&")
+         ).replace(/\0/g, '');//.trim();
+         var sImgURL = sOrthoverseLandInformation.replace("metadata","img").replace(".json",".png").replace("0x","");
+
+         //.replace("-0","-"+iOrthoverseCastleLevel)         //  alert(sImgURL);
+         if (fHome) {
+           (host?orthoverseHomeLand:orthoverseEnemyLand).innerHTML = "YOUR LAND:<br><img src='" + sImgURL + "' class='img-fluid' />";
+           (host?orthoverseHomeLand:orthoverseEnemyLand).classList.remove("d-none");
+         }
+         else {
+          (host?orthoverseEnemyLand:orthoverseHomeLand).innerHTML = "ENEMY LAND:<br><img src='" + sImgURL + "' class='img-fluid' />";
+          (host?orthoverseEnemyLand:orthoverseHomeLand).classList.remove("d-none");
+     }
+
+   })
+       .catch((error) => {
+         // If the request fails, the Promise will reject with an error.
+         console.log("eth_call failed: " +error.message);
+         //orthoverseStatus.innerHTML = 'No Orthoverse land detected.  Reveal your land at <a href="https://orthoverse.io">orthoverse.io</a>';
+         //return null;
+       });
+   
+   
+   }
+//    function getOrthoverseCastleLevel(index) {
+//      var orthoverseCastleLevel = "";
+//      var zero24 = "000000000000000000000000";
+//      var params = [
+//        {
+//          //from: softAddress(),
+//          to: orthoTokenContact,
+//          //'4-byte function hash followed by address',
+//          data: "0xc08db79d" + zero24 + softAddress(false),
+//          //"gas":"0x5f5e100", "gasprice":"0x3b9aca00", "value":"0x0"
+//          // id: 1
+//        }
+//        //,"latest"
+//      ];
+     
+//      ethereum
+//        .request({
+//          method: 'eth_call',
+//          params,
+//          id: '1'
+//        })
+//        .then((result) => {
+//          // Good result returns null in this case
+//          console.log("Good: " +result);
+   
+//          // Using the decodeURIComponent function in combination with regex to convert the hex value into utf8 value
+//          iOrthoverseCastleLevel = convertHexToDecimal(result.substr(2));
+//    })
+//        .catch((error) => {
+//          // If the request fails, the Promise will reject with an error.
+//          console.log("eth_call failed: " +error.message);
+//        });
+//    }
+
+   
+//    // INITIALIZE OUR STUFF HERE
+//    // get our own CASTLE INFORMATION (NOTE: ASYNC!!!)
+// getOrthoverseCastleLevel(0);
+//getOrthoverseLandInformation(0);
+
+
+
 function objcopy(o){
   let copy = {}
   for (var a in o) {
@@ -150,7 +288,8 @@ setup = {
     divGameInfo.style.display='block';
 
     if (!host) {
-      send({type:"version", version})
+     var walletAddress = softAddress(false);
+      send({type:"version", version, walletAddress})
     }
   },
   onclose: function(){
@@ -175,17 +314,28 @@ setup = {
     if (data.type) switch (data.type) {
       case "version":
         if (data.version != version) {
-          if (host) send({type:"version", version}) //force the other player to also throw this error
+          if (host) 
+               send({type:"version", version}) //force the other player to also throw this error
           alert("Version mismatch! Please refresh the page and try again")
           DC.dc.close()
-        } else send({type:"SYN"})
+        } 
+        else {
+          console.log("Received Version. Sending SYN"); 
+          yourwallet = data.walletAddress;
+          ShowLand(yourwallet, false);
+          send({type:"SYN"})
+        }
         break;
       case "SYN":
+        console.log("Received SYN. Sending SYNACK"); 
         send({type:"SYNACK"})
         break;
       case "SYNACK":
         // repeatedly send start condition to establish average ping time
-        if (pingStack.length < stacksize) send({type:"SYN"})
+        if (pingStack.length < stacksize) {
+          console.log("Received SYNACK. Sending another SYN.  Ping size is " + pingStack.length); 
+          send({type:"SYN"})
+          }
         else {
           pingStack.shift() // The first is usually unrepresentative, throw away
           let halftrip = avg(pingStack)/2
@@ -195,7 +345,10 @@ setup = {
           ballStartSpeed = Number(ballspeed.value)
           // ballSpeedIncrement = Number(ballSpeedIncrement.value);
           imgid = getBackgroundImage();
-          send({type:"ACK", seed, bufferSize, ballStartSpeed, imgid })
+          console.log("Received SYNACK. Sending ACK with game details"); 
+          var walletAddress = softAddress(false);
+
+          send({type:"ACK", seed, bufferSize, ballStartSpeed, imgid, walletAddress })
 
           // wait for half the roundtrip time before starting the first frame
           nextFrame = performance.now() + halftrip
@@ -203,10 +356,13 @@ setup = {
         }
         break;
       case "ACK":
+        console.log("Received ACK. Applying game details"); 
         seed=data.seed
         bufferSize = data.bufferSize
         ballStartSpeed = data.ballStartSpeed
-        // set background image
+        yourwallet = data.walletAddress;
+        ShowLand(yourwallet, false);
+      // set background image
         setBackgroundImage(data.imgid);
         nextFrame = performance.now()
         initBuffer()
@@ -390,6 +546,7 @@ createBtn.onclick = function() {
   divCreateGameOptions.style.display='block'
   divHomeActionButtons.style.display='none'
   host=true;
+  ShowLand(softAddress(false),true);  
 }
 
 joinBtn1.onclick = function(){
@@ -400,7 +557,11 @@ joinBtn1.onclick = function(){
 }
 joinBtn2.onclick = function(){
   //DC.join( parseInt(conid.value), scpice.value, setup );
+//  document.body.style.backgroundImage="";
   DC.joinRoom(setup);
+
+  ShowLand(softAddress(false),true);
+  
 //   divJoinBox.innerHTML='Connecting...'
   return false
 }
@@ -445,22 +606,22 @@ canvas.ontouchmove=function(e){
 }
 
 const imgs = [
-     "", // image zero
-     "pexels-caio-62645.jpg", 
-     "pexels-ekrulila-2615285.jpg", 
-     "pexels-elina-sazonova-1876580.jpg",
-     "pexels-hert-niks-3224113.jpg",
-     "pexels-julia-volk-5272995.jpg",
-     "pexels-julia-volk-5273000.jpg",
-     "pexels-lisa-fotios-3341054.jpg",
-     "pexels-markus-spiske-127723.jpg",
-     "pexels-min-an-1006094.jpg",
-     "pexels-miquel-rossello-calafell-3061171.jpg",
-     "pexels-pixabay-161913.jpg",
-     "pexels-pixabay-208598.jpg",
-     "pexels-pixabay-208674.jpg",
-     "pexels-rachel-claire-4819830.jpg",
-     "pexels-rudolf-kirchner-831082.jpg"
+     "", "", // image zero
+     "pexels-caio-62645.jpg", "Photo by Caio on pexels.com",
+     "pexels-ekrulila-2615285.jpg", "Photo by Ekrulila on pexels.com",
+     "pexels-elina-sazonova-1876580.jpg", "Photo by Elina Sazonova on pexels.com",
+     "pexels-hert-niks-3224113.jpg", "Photo by Hert Niks on pexels.com",
+     "pexels-julia-volk-5272995.jpg", "Photo by Julia Volk on pexels.com",
+     "pexels-julia-volk-5273000.jpg", "Photo by Julia Volk on pexels.com",
+     "pexels-lisa-fotios-3341054.jpg", "Photo by Lisa Fotios on pexels.com",
+     "pexels-markus-spiske-127723.jpg", "Photo by Markus Spiske on pexels.com",
+     "pexels-min-an-1006094.jpg", "Photo by Min An on pexels.com",
+     "pexels-miquel-rossello-calafell-3061171.jpg", "Photo by Miquel Rossello Calafell on pexels.com",
+     "pexels-pixabay-161913.jpg", "Photo by Pixabay on pexels.com",
+     "pexels-pixabay-208598.jpg", "Photo by Pixabay on pexels.com",
+     "pexels-pixabay-208674.jpg","Photo by Pixabay on pexels.com",
+     "pexels-rachel-claire-4819830.jpg","Photo by Rachel Claire on pexels.com",
+     "pexels-rudolf-kirchner-831082.jpg","Photo by Rudolf Kirchner on pexels.com"
 ];
 
 function getBackgroundImage() {
@@ -469,17 +630,48 @@ function getBackgroundImage() {
 }
 function setBackgroundImage(imgid) {
      //var imgid = document.getElementById("bkimg").value;
-     document.body.style.backgroundImage = "url("+imgs[imgid]+")";
+     if (imgid > 0) {
+     document.body.style.backgroundImage = "url("+imgs[imgid*2]+")";
      document.body.style.backgroundSize = "cover";
+     } else {
+          document.body.style.background = "#131313";
+     }
+     // document.getElementById("photocredit1").innerHTML = imgs[imgid*2+1];
+     document.getElementById("photocredit2").innerHTML = imgs[imgid*2+1];
+}
+
+function hardConnect() {
+     ethereum
+     .request({ method: "eth_requestAccounts" })
+     .then((accounts) => {
+     })
+     .catch((error) => {
+       console.log(error, error.code);
+   
+     });
+   }
+
+   
+function onloadstuff() {
+     if (!softConnect()) {
+          hardConnect();
+          //window.setTimeout("onloadstuff()",500);
+          // alert("Metamask is no longer connected to the Orthoverse!")
+          // window.location.href = "index.html";
+     } //else 
+         // ShowLand(softAddress(false),true);
+
 }
 
 window.onload=window.onresize=function(){
+     onloadstuff();
   scaleFactor=Math.max(1,w/(window.innerWidth-16),h/(window.innerHeight*0.98))
   document.getElementById("bkimg").addEventListener("change",()=>{
           //alert("change!");
           var imgid = document.getElementById("bkimg").value;
-          document.body.style.backgroundImage = "url("+imgs[imgid]+")";
-          document.body.style.backgroundSize = "cover";
+          setBackgroundImage(imgid);
+          //document.body.style.backgroundImage = "url("+imgs[imgid*2]+")";
+          //document.body.style.backgroundSize = "cover";
   });
 }
 

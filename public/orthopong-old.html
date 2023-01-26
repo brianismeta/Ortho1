@@ -4,10 +4,9 @@
 </html><meta charset="utf-8">
 <meta name=viewport content="width=device-width, initial-scale=1.0">
 <title>metameow games - pong</title>
-<link rel="stylesheet" href="pong2.css">
+<link rel="stylesheet" href="pong.css">
 </head>
 <body>
-     <div id="textstuff">
      <h1>Pong for the Orthoverse!</h1>
      <p>Challenge another Orthoverse player to an epic game of pong.</p>
      <p>Who will reign supreme?</p>
@@ -26,26 +25,6 @@
 <!-- <h2>ID: </h2> -->
 <br>Share this Invite Code: <input id="scpicehost" size="34">
 <p/>
-<p>
-     Background: <select id="bkimg">
-          <option value=1>1</option>
-          <option value=2>2</option>
-          <option value=3>3</option>
-          <option value=4>4</option>
-          <option value=5>5</option>
-          <option value=6>6</option>
-          <option value=7>7</option>
-          <option value=8>8</option>
-          <option value=9>9</option>
-          <option value=10>10</option>
-          <option value=11>11</option>
-          <option value=12>12</option>
-          <option value=13>13</option>
-          <option value=14>14</option>
-          <option value=15>15</option>
-         </select>
-     </p>
-     
 <div style="display: none">
 Buffer Size: <select id=bufsize>
  <option value=Auto>Auto</option>
@@ -59,16 +38,13 @@ Buffer Size: <select id=bufsize>
  <option value=8>8</option>
  <option value=9>9</option>
  <option value=10>10</option>
-</select>
-<p>
+</select><p>
 Difficulty: <span id=bspl></span><br><input id=ballspeed type=range min=2 max=20 value=2 oninput='bspl.textContent=this.value+" [ "+ ["boring","normal","crazy"][Math.floor(this.value/7)]+" ]"'>
-
-
 </div>
 </div>
 
 <pre id=debuglog></pre>
-</div>
+
 <div id=divGameInfo style='display:none'>
  <canvas id=game style="outline:1px solid;" width=800 height=600></canvas>
  <br><label><input style="display: none" id=showstats oninput="showstats=this.checked;statsbox.style.display=showstats?'block':'none'"> &nbsp; </label>
@@ -82,7 +58,7 @@ Difficulty: <span id=bspl></span><br><input id=ballspeed type=range min=2 max=20
 <!-- <script src="peerjs.min.js"></script> -->
 <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script> 
 <script src=DC.js></script>
-<script src="pong2.js"/>
+<script src="pong.js"/>
 
 
 </script>
