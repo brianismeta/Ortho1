@@ -361,9 +361,18 @@ setup = {
         bufferSize = data.bufferSize
         ballStartSpeed = data.ballStartSpeed
         yourwallet = data.walletAddress;
+        //var gamevs = yourwallet + " vs " + mywallet;
         ShowLand(yourwallet, false);
       // set background image
         setBackgroundImage(data.imgid);
+          var imgimg = data.imgid;
+        gtag('event', 'click_startgame', {
+          'event_category': 'pong_game',
+          'event_label': 'background',
+          'value': imgimg
+        });
+
+        
         nextFrame = performance.now()
         initBuffer()
         processFrame()
