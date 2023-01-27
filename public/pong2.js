@@ -539,6 +539,9 @@ DC.log=function(...e) {
   document.getElementById("debuglog").innerHTML += e.join(" ")+"\n"
 }
 createBtn.onclick = function() {
+     gtag('event', 'click_creategame', {
+          'event_category': 'pong_game'
+        });
   DC.host(setup);
   //  setup, id=> {
   //   document.querySelector('#divCreateGameOptions h2').innerHTML = 'ID: '+ id
@@ -558,7 +561,10 @@ joinBtn1.onclick = function(){
 joinBtn2.onclick = function(){
   //DC.join( parseInt(conid.value), scpice.value, setup );
 //  document.body.style.backgroundImage="";
-  DC.joinRoom(setup);
+gtag('event', 'click_joingame', {
+     'event_category': 'pong_game'
+   });
+DC.joinRoom(setup);
 
   ShowLand(softAddress(false),true);
   

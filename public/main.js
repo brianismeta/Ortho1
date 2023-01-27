@@ -9,6 +9,7 @@ const installAlert = document.getElementById("installAlert");
 const orthoverseland = document.getElementById("orthoverseland");
 const mobileDeviceWarning = document.getElementById("mobileDeviceWarning");
 const showland = document.getElementById("showland");
+// const bkimg = document.getElementById("bkimg");
 
 var sOrthoverseLandInformation = "*";
 var iOrthoverseCastleLevel = -1;
@@ -384,8 +385,15 @@ window.addEventListener("load", ()=>
   {
 //    RefreshButtonStatus();
 
+     // if (bkimg) bkimg.addEventListener("change", ()=> {
+     //      alert("change!");
+     // });
   if(connectButton)  connectButton.addEventListener("click", ()=>
     {
+     gtag('event', 'click_connect', {
+          'event_category': 'pong_main'
+        });
+
       if (typeof window.ethereum !== "undefined") {
         //startLoading();
         hardConnect();
@@ -400,7 +408,10 @@ window.addEventListener("load", ()=>
     });
   if(switchButton) switchButton.addEventListener("click", ()=> 
   {
-    switchMainNet(); 
+     gtag('event', 'click_switchchain', {
+          'event_category': 'pong_main'
+        });
+         switchMainNet(); 
     
   }
   );
@@ -418,7 +429,10 @@ window.addEventListener("load", ()=>
     
   if (playButton) playButton.addEventListener("click",() => {
     //alert("Not implemented!");
-    location.href = "orthopong.html";
+    gtag('event', 'click_play', {
+     'event_category': 'pong_main'
+   });
+       location.href = "orthopong.html";
   });
     if (orthoButton) orthoButton.addEventListener("click", ()=> {
 //    AddOrthoTokenToWallet();
