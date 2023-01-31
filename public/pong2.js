@@ -49,7 +49,11 @@ scoreLeft=0
 scoreRight=0
 
 ballStartSpeed=4;
-ballSpeedIncrement = 0.1;
+ballSpeedIncrement = 0.25;
+
+gameEnded=0;
+leftWinner=0;
+rightWinner=0;
 
 ball={x:0,y:-20,speed:0,hspeed:0,vspeed:0}
 
@@ -215,6 +219,14 @@ function loadRollbackState(){
 draw=function(t){
   ctx.clearRect( 0,0,w,h)
 
+  if (gameEnded) {
+     var saveColor = ctx.fillStyle;
+     ctx.fillStyle = leftWinner? "#A6EE7A":"#F7816E";
+     ctx.fillRect(0,0,w/2,h);
+     ctx.fillStyle = leftWinner?"#F7816E":"#A6EE7A";
+     ctx.fillRect(w/2,0,w,h);
+     ctx.fillStyle = saveColor;
+  }
   if (frameNumber<88) {
     for (let i=0;i<frameNumber/8;i++) ctx.fillRect( w/2-5,13+i*27, 10,10),ctx.fillRect( w/2-5,580-i*27, 10,10)
   } else {
@@ -249,12 +261,59 @@ function rng() {
   return ((t ^ t >>> 14) >>> 0) / 4294967296;
 }
 
+function FixAngle(myangle) {
+     // if the angle is too close to vertical, game will get boring.
+     // check for these radian numbers and fix it.
+     // Hard game will make adjustment more towards center than Easy or Medium.
+     var pi = Math.PI;
+     if (myangle < 0) {
+          myangle += 2*pi;
+     }
+     var cntn,lb,hb,mb,ret;
+     cntn = pi/4;
+     lb = pi/4; //3*pi/8;
+     mb = pi/2;
+     hb = 3*pi/4; //5*pi/8;
+     if (myangle > lb && myangle < mb) {
+          ret= rng()*cntn;
+          console.log("Fixed angle from " + myangle + " to " + ret);
+          return ret;// lb;
+     } else if (myangle >= mb && myangle < hb) {
+          ret= pi - rng()*cntn;
+          console.log("Fixed angle from " + myangle + " to " + ret);
+          return ret; //hb;
+     }
+     lb = 5*pi/4; //11*pi/8;
+     mb = 3*pi/2;
+     hb = 7*pi/4; //13*pi/8;
+     if (myangle > lb && myangle < mb) {
+          ret= pi + rng()*cntn;
+          console.log("Fixed angle from " + myangle + " to " + ret);
+          return ret;// lb;
+     } else if (myangle >= mb && myangle < hb) {
+          ret= 2*pi - rng()*cntn;
+          console.log("Fixed angle from " + myangle + " to " + ret);
+          return ret; //hb;
+     }
+     return myangle;
+}
 function resetBall(){
+
+     // check to see if someone won the game
+
+
+
   // choose a random angle in a 90deg cone facing one of the players
   let angle, pi=Math.PI;
   angle= rng()*pi/2-pi/4;
-  if (rng()>0.5) angle+=pi;
-
+  if (rng()>0.5) {
+     if (angle > 0)
+          angle+= -pi;
+     else
+          angle+=pi;
+     }
+  console.log("Angle start: " + angle);
+     angle = FixAngle(angle);
   ball.x=w/2
   ball.y=h/2
   ball.speed=ballStartSpeed
@@ -342,9 +401,22 @@ setup = {
 
           bufferSize = (bufsize.value=="Auto") ? Math.min(5,Math.ceil(halftrip/frameLength)) : Number(bufsize.value);
           initBuffer()
-          ballStartSpeed = Number(ballspeed.value)
+          //ballStartSpeed = Number(ballspeed.value)
+     
+          
           // ballSpeedIncrement = Number(ballSpeedIncrement.value);
           imgid = getBackgroundImage();
+          var difflevel = document.getElementById("difflevel").value;
+          if (difflevel == 1) {
+               ballStartSpeed = 3;
+               paddleH=240;
+          } else if (difflevel == 2) {
+               ballStartSpeed = 5;
+               paddleH=180;
+          } else if (difflevel ==3) {
+               ballStartSpeed = 7;
+               paddleH=120;
+          }
           console.log("Received SYNACK. Sending ACK with game details"); 
           var walletAddress = softAddress(false);
 
@@ -361,6 +433,14 @@ setup = {
         bufferSize = data.bufferSize
         ballStartSpeed = data.ballStartSpeed
         yourwallet = data.walletAddress;
+        if (ballStartSpeed == 3) {
+          paddleH = 240;
+     } else if (ballStartSpeed == 5) {
+          paddleH=180;
+     } else if (ballStartSpeed ==7) {
+          paddleH=120;
+     }
+
         //var gamevs = yourwallet + " vs " + mywallet;
         ShowLand(yourwallet, false);
       // set background image
@@ -420,8 +500,23 @@ function initBuffer(){
     frameNumber++
   }
 }
-function processFrame(){
 
+
+function processFrame(){
+// this is the key game loop -- if game ends, need to break this loop.
+
+if (scoreLeft >=5 || scoreRight >= 5) {
+     if (scoreLeft > scoreRight) {
+          gameEnded = 1;
+          leftWinner = 1;
+     } else if (scoreRight > scoreLeft) {
+          gameEnded = 1;
+          rightWinner = 1;
+     }
+}
+
+if (gameEnded)
+     return;
   let yoInput,myInput;
   if (yoInputs.length==0) {
     if (rollbackInputs.length>=10){
@@ -473,6 +568,7 @@ function processFrame(){
   let delay = nextFrame - now
 
   // send inputs to other
+  // if game is ended, we should not need to send inputs
   send({type:"input", input:myinput, delay})
 
   let framesync = now-lastAnimationFrame-synctick;
@@ -483,6 +579,7 @@ function processFrame(){
 }
 
 function processGameLogic(myInput,yoInput){
+     // called by processFrame and onmessage
   let oldlefty=left.y, oldrighty=right.y
 
   if (host) { processPlayer(left, myInput); processPlayer(right, yoInput); }
@@ -505,15 +602,21 @@ function processGameLogic(myInput,yoInput){
       //reflect based on position
       ball.speed = ball.speed + ball.speedIncrement;
       let angle = Math.atan2(ball.y-left.y, 15)
+      // limit angle to within 50 degrees of x-axis.
+      angle = FixAngle(angle);
       ball.hspeed = Math.cos(angle)*ball.speed
       ball.vspeed = Math.sin(angle)*ball.speed
+      console.log("Angle is now " + angle);
       ball.x++
     }
     else if (Math.round(ball.x+ballSize/2) == Math.round(right.x-paddleW/2+1) && vcollision(right)) {
       ball.speed = ball.speed + ball.speedIncrement;
       let angle = Math.atan2(ball.y-right.y, -15)
+      // limit angle to within 50 degrees of x-axis.
+      angle = FixAngle(angle);
       ball.hspeed = Math.cos(angle)*ball.speed
       ball.vspeed = Math.sin(angle)*ball.speed
+      console.log("Angle is now " + angle);
       ball.x--
     }
     else if (ball.x-ballSize/2 < left.x+paddleW/2-1 && vcollision(left)) {
