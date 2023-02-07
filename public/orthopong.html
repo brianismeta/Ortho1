@@ -25,8 +25,8 @@
      <p>Challenge another Orthoverse player to an epic game of pong.</p>
      <p>Who will reign supreme? First player to 5 points wins.</p>
           <div id=divHomeActionButtons>
-<p>&nbsp;</p><p><button id="createBtn">Create Game</button>
-<p><button id="joinBtn1">Join Game</button>
+<p>&nbsp;</p><p><button id="createBtn">Invite another player</button>
+<p><button id="joinBtn1">I have an invitation code</button>
 </div>
 
 <form id=divJoinBox style='display:none;padding:20px;'>
@@ -63,7 +63,7 @@
           <p>
                2. Choose the Difficulty Level: <select id="difflevel">
                     <option value=1>Easy</option>
-                    <option value=2>Normal</option>
+                    <option value=2 selected>Normal</option>
                     <option value=3>Hard</option>
                    </select><br>
                     </p>
@@ -89,10 +89,24 @@ Difficulty: <span id=bspl></span><br><input id=ballspeed type=range min=2 max=20
 
 
 </div>
+
+
+
 </div>
 
 <pre id=debuglog></pre>
 </div>
+<div id="textstuff">
+     <p>&nbsp;</p>
+<div id="host_wait_guest_ready" style='display:none' class="">Waiting for Enemy to Engage...</div>
+<button id="startBtn"  style='display:none;margin:0;position:absolute'>Start Game</button>
+<div id="guest_wait_host_ready" style='display:none' class="">Waiting for Enemy to Start Game...</div>
+<div id="guest_wait_ready" style='display:none' class="">Press button after all images have loaded...</div>
+<button id="readyBtn"  style='display:none;margin:0;position:absolute'>I'm Ready To Play</button>
+<button id="placeholderBtn"  style='visibility:hidden'>Placeholder</button>
+<p>&nbsp;</p></div>
+
+<p>&nbsp;</p><p>&nbsp;</p>
 <div id=divGameInfo style='display:none'>
 
      <div class="container text-center">
@@ -103,6 +117,7 @@ Difficulty: <span id=bspl></span><br><input id=ballspeed type=range min=2 max=20
                
             </div>
             <div class="col-6">
+
                 <canvas id=game style="outline:1px solid;" width=800 height=600></canvas>
                </div>
                <div class="col">

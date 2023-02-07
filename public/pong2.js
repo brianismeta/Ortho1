@@ -65,6 +65,12 @@ const orthoTokenURI = "https://orthoverse.io/api/metadata/";
 
 orthoverseHomeLand = document.getElementById("orthoverseHomeLand");
 orthoverseEnemyLand = document.getElementById("orthoverseEnemyLand");
+startBtn = document.getElementById("startBtn");
+readyBtn = document.getElementById("readyBtn");
+host_wait_guest_ready = document.getElementById("host_wait_guest_ready");// style='display:none' class="">Waiting for Enemy to Engage...</div>
+guest_wait_host_ready = document.getElementById("guest_wait_host_ready");// style='display:none' class="">Waiting for Enemy to Start Game...</div>
+guest_wait_ready = document.getElementById("guest_wait_ready"); // style='display:none' class="">Press button after all images have loaded...</div>
+
 
 //var sOrthoverseLandInformation = "*";
 //var iOrthoverseCastleLevel = -1;
@@ -214,6 +220,15 @@ function loadRollbackState(){
   ball=objcopy(rollbackState.ball)
 }
 
+drawInitialPongGame=function(t){
+     ctx.clearRect( 0,0,w,h)
+   
+       ctx.fillRect( left.x - paddleW/2, left.y - paddleH/2, paddleW, paddleH)
+       ctx.fillRect( right.x - paddleW/2, right.y - paddleH/2, paddleW, paddleH)
+     //   for (let i=13;i<h;i+=27) ctx.fillRect( w/2-5,i, 10,10)
+     //if (connected) requestAnimationFrame(drawInitialPongGame)
+   }
+   
 
 // Animation frame FPS could be different at each end, so don't rely on it for any timing.
 draw=function(t){
@@ -371,7 +386,20 @@ setup = {
     }
 
     if (data.type) switch (data.type) {
+     // changed the logic due to initial issue with loading background image appears to 
+     // conflict with the game's buffer sync detection
+     // Now this is what is expected:
+     // VERSION sent from JOINER to HOSTER with WalletAddr
+     // ACKVERSION sent from HOSTER to JOINER with WalletAddr, Difficulty, BackgroundImage
+     // JOINER will see START GAME button within a few seconds, delayed to load images
+     // STARTGAME sent from JOINER to HOSTER
+     // SYN sent from HOSTER to JOINER
+     // exchange SYNACK / SYN for 5 times
+     // ACK sent from HOSTER to JOINER with seed and buffersize
+     // game starts
+
       case "version":
+
         if (data.version != version) {
           if (host) 
                send({type:"version", version}) //force the other player to also throw this error
@@ -379,15 +407,118 @@ setup = {
           DC.dc.close()
         } 
         else {
-          console.log("Received Version. Sending SYN"); 
+          //
+          // GENERALLY THE PERSON WHO RECEIVE 'VERSION' IS THE HOST
+          //
+          // Receives the wallet address of the GUEST, so can display it on the screen
+          //
+          //console.log("Received Version. Sending SYN");
+          console.log("Received Version. Sending ACKVERSION"); 
           yourwallet = data.walletAddress;
           ShowLand(yourwallet, false);
-          send({type:"SYN"})
+          //send({type:"SYN"})
+          var imgid = getBackgroundImage();
+          var difflevel = document.getElementById("difflevel").value;
+          if (difflevel == 1) {
+               ballStartSpeed = 3;
+               paddleH=240;
+          } else if (difflevel == 2) {
+               ballStartSpeed = 5;
+               paddleH=180;
+          } else if (difflevel ==3) {
+               ballStartSpeed = 7;
+               paddleH=120;
+          }
+          var walletAddress = softAddress(false);
+          send({type:"ACKVERSION",walletAddress,imgid,ballStartSpeed  })
+          requestAnimationFrame(drawInitialPongGame);
+
+          // now show that we are waiting on the GUEST to be READY
+          host_wait_guest_ready.style.display="";
+          startBtn.style.display="none";
+          readyBtn.style.display="none";
+          host_wait_guest_ready.style.display="";
+          guest_wait_host_ready.style.display="none";
+          guest_wait_ready.style.display="none";
+          
+
         }
         break;
-      case "SYN":
+     case "ACKVERSION":
+          //console.log("Received Version. Sending SYN");
+          console.log("Received ACKVERSION."); 
+          //yourwallet = data.walletAddress;
+          //ShowLand(yourwallet, false);
+          //send({type:"SYN"})
+          //send({type:"ACKVERSION",ballStartSpeed, imgid, walletAddress })
+          //   seed=data.seed
+          //   bufferSize = data.bufferSize
+          //
+          // GENERALLY THE PERSON WHO RECEIVE 'ACKVERSION' IS THE GUEST
+          //
+          // Receives the wallet address of the HOST, the IMAGE ID (for the background image)
+          // and the 'DIFFICULTY' (e.g. ball speed, paddle size)
+          //
+          ballStartSpeed = data.ballStartSpeed
+          yourwallet = data.walletAddress;
+          if (ballStartSpeed == 3) {
+               paddleH = 240;
+          } else if (ballStartSpeed == 5) {
+               paddleH=180;
+          } else if (ballStartSpeed ==7) {
+               paddleH=120;
+          }
+    
+          //var gamevs = yourwallet + " vs " + mywallet;
+          ShowLand(yourwallet, false);
+          // set background image
+          setBackgroundImage(data.imgid);
+          var imgimg = data.imgid;
+          gtag('event', 'guest_recv_gameinfo', {
+               'event_category': 'pong_game',
+               'event_label': 'background',
+               'value': imgimg
+          });
+          requestAnimationFrame(drawInitialPongGame);
+    
+          // now show that we are waiting for the GUEST to be READY
+          readyBtn.style.display = '';
+          host_wait_guest_ready.style.display="none";
+          startBtn.style.display="none";
+          host_wait_guest_ready.style.display="none";
+          guest_wait_host_ready.style.display="none";
+          guest_wait_ready.style.display="";
+
+          break;
+     case "READY":
+          //
+          // GENERALLY THE PERSON WHO RECEIVE 'READY' IS THE HOST
+          //
+          // This indicates that the GUEST is READY, and the HOST can now start the game
+          //
+          console.log("Received READY."); // Sending SYN"); 
+          startBtn.style.display = "";
+          //send({type:"SYN"})
+          // now show that we are waiting for the GUEST to be READY
+          readyBtn.style.display = 'none';
+          host_wait_guest_ready.style.display="none";
+          startBtn.style.display="";
+          host_wait_guest_ready.style.display="none";
+          guest_wait_host_ready.style.display="none";
+          guest_wait_ready.style.display="none";
+          break;
+            break;
+
+     case "SYN":
         console.log("Received SYN. Sending SYNACK"); 
         send({type:"SYNACK"})
+          // GUEST RECEIVES SYN SO GAME IS STARTING
+          host_wait_guest_ready.style.display="none";
+          startBtn.style.display="none";
+          readyBtn.style.display="none";
+          host_wait_guest_ready.style.display="none";
+          guest_wait_host_ready.style.display="none";
+          guest_wait_ready.style.display="none";
         break;
       case "SYNACK":
         // repeatedly send start condition to establish average ping time
@@ -405,7 +536,7 @@ setup = {
      
           
           // ballSpeedIncrement = Number(ballSpeedIncrement.value);
-          imgid = getBackgroundImage();
+          var imgid = getBackgroundImage();
           var difflevel = document.getElementById("difflevel").value;
           if (difflevel == 1) {
                ballStartSpeed = 3;
@@ -431,26 +562,26 @@ setup = {
         console.log("Received ACK. Applying game details"); 
         seed=data.seed
         bufferSize = data.bufferSize
-        ballStartSpeed = data.ballStartSpeed
-        yourwallet = data.walletAddress;
-        if (ballStartSpeed == 3) {
-          paddleH = 240;
-     } else if (ballStartSpeed == 5) {
-          paddleH=180;
-     } else if (ballStartSpeed ==7) {
-          paddleH=120;
-     }
+     //    ballStartSpeed = data.ballStartSpeed
+     //    yourwallet = data.walletAddress;
+     //    if (ballStartSpeed == 3) {
+     //      paddleH = 240;
+     // } else if (ballStartSpeed == 5) {
+     //      paddleH=180;
+     // } else if (ballStartSpeed ==7) {
+     //      paddleH=120;
+     // }
 
-        //var gamevs = yourwallet + " vs " + mywallet;
-        ShowLand(yourwallet, false);
-      // set background image
-        setBackgroundImage(data.imgid);
-          var imgimg = data.imgid;
-        gtag('event', 'click_startgame', {
-          'event_category': 'pong_game',
-          'event_label': 'background',
-          'value': imgimg
-        });
+     //    //var gamevs = yourwallet + " vs " + mywallet;
+     //    ShowLand(yourwallet, false);
+     //  // set background image
+     //    setBackgroundImage(data.imgid);
+     //      var imgimg = data.imgid;
+     //    gtag('event', 'click_startgame', {
+     //      'event_category': 'pong_game',
+     //      'event_label': 'background',
+     //      'value': imgimg
+     //    });
 
         
         nextFrame = performance.now()
@@ -651,7 +782,7 @@ DC.log=function(...e) {
   document.getElementById("debuglog").innerHTML += e.join(" ")+"\n"
 }
 createBtn.onclick = function() {
-     gtag('event', 'click_creategame', {
+     gtag('event', 'host_click_creategame', {
           'event_category': 'pong_game'
         });
   DC.host(setup);
@@ -664,7 +795,38 @@ createBtn.onclick = function() {
   ShowLand(softAddress(false),true);  
 }
 
-joinBtn1.onclick = function(){
+startBtn.onclick = function(){
+     //DC.join( parseInt(conid.value), scpice.value, setup );
+     //  document.body.style.backgroundImage="";
+     gtag('event', 'host_click_startgame', {
+          'event_category': 'pong_game'
+     });
+     send({type:"SYN" })
+     startBtn.style.display="none";
+     readyBtn.style.display = 'none';
+     host_wait_guest_ready.style.display="none";
+     host_wait_guest_ready.style.display="none";
+     guest_wait_host_ready.style.display="none";
+     guest_wait_ready.style.display="none";
+
+};
+readyBtn.onclick = function(){
+     //DC.join( parseInt(conid.value), scpice.value, setup );
+     //  document.body.style.backgroundImage="";
+     gtag('event', 'guest_click_readygame', {
+          'event_category': 'pong_game'
+     });
+     send({type:"READY" })
+     readyBtn.style.display="none";
+     startBtn.style.display="none";
+     host_wait_guest_ready.style.display="none";
+     host_wait_guest_ready.style.display="none";
+     guest_wait_host_ready.style.display="";
+     guest_wait_ready.style.display="none";
+
+};        
+   
+      joinBtn1.onclick = function(){
   divJoinBox.style.display='block'
   divHomeActionButtons.style.display='none'
   // conid.value = DC.id ? DC.id:"";
@@ -673,7 +835,7 @@ joinBtn1.onclick = function(){
 joinBtn2.onclick = function(){
   //DC.join( parseInt(conid.value), scpice.value, setup );
 //  document.body.style.backgroundImage="";
-gtag('event', 'click_joingame', {
+gtag('event', 'guest_click_joingame', {
      'event_category': 'pong_game'
    });
 DC.joinRoom(setup);
@@ -749,8 +911,25 @@ function getBackgroundImage() {
 function setBackgroundImage(imgid) {
      //var imgid = document.getElementById("bkimg").value;
      if (imgid > 0) {
-     document.body.style.backgroundImage = "url("+imgs[imgid*2]+")";
-     document.body.style.backgroundSize = "cover";
+          // preload into img element
+          // and then move over to background
+          // var imageUrl = imgs[imgid*2];//"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
+          // var bgElement = document.body;
+          // var preloaderImg = document.createElement("img");
+          // console.log("image url is " + imageUrl);
+          // preloaderImg.addEventListener('load', (event) => {
+          //      console.log("image loaded");
+          //      document.body.style.backgroundImage = "url('" + imageUrl + "')";
+          //      document.body.style.backgroundSize = "cover";
+          //      //preloaderImg = null;
+          // });
+          // preloaderImg.src = imageUrl;
+          // if (preloaderImg.complete) {
+          //      preloaderImg.dispatchEvent(new Event("load"));
+          // }
+
+          document.body.style.backgroundImage = "url("+imgs[imgid*2]+")";
+          document.body.style.backgroundSize = "cover";
      } else {
           document.body.style.background = "#131313";
      }
