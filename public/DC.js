@@ -17,7 +17,7 @@ var conn = null;
 //var peerconfig = null;
 var eu_turn_server = 'turn:eu-0.turn.peerjs.com:3478?transport=tcp';
 var na_turn_server = 'turn:us-0.turn.peerjs.com:3478?transport=tcp';
-var peerconfig = { 'host': '0.peerjs.com', 'debug': 3, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:us-0.turn.peerjs.com:3478?transport=tcp', username: 'peerjs', credential: 'peerjsp' }]}};
+var peerconfig = { 'host': '0.peerjs.com', 'debug': 0, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:us-0.turn.peerjs.com:3478?transport=tcp', username: 'peerjs', credential: 'peerjsp' }]}};
 //var peerconfig = { 'host': '0.peerjs.com', 'debug': 3, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:relay.metered.ca:80', username: '339b2c2c352953b59cd1800c', credential: 'cvf1xgDZRFU7E36I' }]}};
 //var peerconfig = { 'host': '0.peerjs.com', 'debug': 3, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:signaling.cuveebits.com:5349', username: '4fa4e982a4b2906b8b5e7be323c6b039014e840bcdc265c12771cd598961eef5', credential: '' }]}};
 
@@ -503,7 +503,7 @@ DC.send = function(data){
           }
      }
      
-     console.log("Sending data " + JSON.stringify(data));
+     //console.log("Sending data " + JSON.stringify(data));
 
      //if (DC.dc && DC.dc.readyState=="open" && data) {
           if (conn) conn.send(data);
