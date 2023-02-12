@@ -229,7 +229,7 @@ drawInitialPongGame=function(t){
      //if (connected) requestAnimationFrame(drawInitialPongGame)
    }
    
-
+var one_time_log_game_ended = false;
 // Animation frame FPS could be different at each end, so don't rely on it for any timing.
 draw=function(t){
   ctx.clearRect( 0,0,w,h)
@@ -241,6 +241,16 @@ draw=function(t){
      ctx.fillStyle = leftWinner?"#F7816E":"#A6EE7A";
      ctx.fillRect(w/2,0,w,h);
      ctx.fillStyle = saveColor;
+     if (! one_time_log_game_ended ) { // draw keeps going... how to stop it????
+          one_time_log_game_ended = true;
+          console.log("*********************************");
+          console.log("*********************************");
+          console.log("*********************************");
+          console.log("          GAME ENDED!");
+          console.log("*********************************");
+          console.log("*********************************");
+          console.log("*********************************");
+     }
   }
   if (frameNumber<88) {
     for (let i=0;i<frameNumber/8;i++) ctx.fillRect( w/2-5,13+i*27, 10,10),ctx.fillRect( w/2-5,580-i*27, 10,10)
@@ -960,6 +970,34 @@ function onloadstuff() {
 
 }
 
+function getConnectIDFromInviteCode() {
+     var guid = document.getElementById("scpice");
+     if (guid.value.substr(2,1) == '-') {
+          return guid.value.substr(3);
+     } else {
+          return guid.value;
+     }
+
+}
+function applyLocationToInviteCode() {
+     var location = document.getElementById("location").value;
+     //setBackgroundImage(imgid);
+     var guid = document.getElementById("scpicehost");
+     if (guid.value.substr(2,1) == '-') {
+          guid.value = location + '-' + guid.value.substr(3);
+     } else {
+          guid.value = location + '-' + guid.value;
+     }
+     if (location == 'EU') {
+          peerconfig.config.iceServers[1].urls = eu_turn_server;
+          //var eu_turn_server = 'turn:eu-0.turn.peerjs.com:3478?transport=tcp';
+          //var na_turn_server = 'turn:us-0.turn.peerjs.com:3478?transport=tcp';
+          
+     } else {
+          peerconfig.config.iceServers[1].urls = na_turn_server;
+
+     }
+}
 window.onload=window.onresize=function(){
      onloadstuff();
   scaleFactor=Math.max(1,w/(window.innerWidth-16),h/(window.innerHeight*0.98))
@@ -970,6 +1008,43 @@ window.onload=window.onresize=function(){
           //document.body.style.backgroundImage = "url("+imgs[imgid*2]+")";
           //document.body.style.backgroundSize = "cover";
   });
+  document.getElementById("location").addEventListener("change",()=>{
+     //alert("change!");
+     applyLocationToInviteCode();
+     
+     //document.body.style.backgroundImage = "url("+imgs[imgid*2]+")";
+     //document.body.style.backgroundSize = "cover";
+});
+
+function applyInviteCodeToPeerConfig() {
+     var guid = document.getElementById("scpice");
+     var location;
+     if (guid.value.substr(2,1) == '-') {
+          location  = guid.value.substr(0,2);
+     } else {
+          location = 'US';
+     }
+     if (location == 'EU') {
+          peerconfig.config.iceServers[1].urls = eu_turn_server;
+          //var eu_turn_server = 'turn:eu-0.turn.peerjs.com:3478?transport=tcp';
+          //var na_turn_server = 'turn:us-0.turn.peerjs.com:3478?transport=tcp';
+          
+     } else {
+          peerconfig.config.iceServers[1].urls = na_turn_server;
+
+     }
+
+}
+document.getElementById("scpice").addEventListener("change",()=>{
+     //alert("change!");
+     applyInviteCodeToPeerConfig();
+     
+     //document.body.style.backgroundImage = "url("+imgs[imgid*2]+")";
+     //document.body.style.backgroundSize = "cover";
+});
+
+
+
 }
 
 

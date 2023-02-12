@@ -14,27 +14,43 @@ var conn = null;
 
 //peer = new Peer(null);
 
+//var peerconfig = null;
+var eu_turn_server = 'turn:eu-0.turn.peerjs.com:3478?transport=tcp';
+var na_turn_server = 'turn:us-0.turn.peerjs.com:3478?transport=tcp';
+var peerconfig = { 'host': '0.peerjs.com', 'debug': 3, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:us-0.turn.peerjs.com:3478?transport=tcp', username: 'peerjs', credential: 'peerjsp' }]}};
+//var peerconfig = { 'host': '0.peerjs.com', 'debug': 3, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:relay.metered.ca:80', username: '339b2c2c352953b59cd1800c', credential: 'cvf1xgDZRFU7E36I' }]}};
+//var peerconfig = { 'host': '0.peerjs.com', 'debug': 3, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:signaling.cuveebits.com:5349', username: '4fa4e982a4b2906b8b5e7be323c6b039014e840bcdc265c12771cd598961eef5', credential: '' }]}};
+
+// error says both username and credential are required when using turn or turns
+//var peerconfig = { 'host': '0.peerjs.com', 'debug': 3, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:signaling.cuveebits.com:5349', credential: '4fa4e982a4b2906b8b5e7be323c6b039014e840bcdc265c12771cd598961eef5' }]}};
+
 function createRoom(setup) {
+     // Close old connection
+     if (conn) {
+          console.log("Closing old connection");
+          conn.close();
+     }
+
      // Create own peer object with connection to shared PeerJS server
      console.log('Create room - init');
-     peer = new Peer(null);
+     peer = new Peer(null,peerconfig);
 
      peer.on('open', function (id) {
           console.log('Create room - open');
           // Workaround for peer.reconnect deleting previous id
           myPeerId = id;
           if (peer.id === null) {
-               console.log('Received null id from peer open');
+               console.log('Received null id from peer open, restoring to last peer id: ' + lastPeerId);
                peer.id = lastPeerId;
           } else {
+               console.log('Remembering peer.id for potential disconnects.');
                lastPeerId = peer.id;
           }
 
-          console.log('ID: ' + peer.id);
-          //recvId.innerHTML = "ID: <br>" + peer.id;
+          console.log('Created peer.id: ' + peer.id);
           scpicehost.value = peer.id;
-
-          addData("Awaiting connection...");
+          applyLocationToInviteCode();
+          console.log("Awaiting connection...");
      });
      peer.on('connection', function (c) {
           console.log('Create room - peer connection');
@@ -50,36 +66,48 @@ function createRoom(setup) {
           }
 
           conn = c;
-          addData("Connected to: " + conn.peer);
+          addData("Connected to peer.id: " + conn.peer);
           addData("Connected");
+          if (!already_init) {
+               already_init = true;
           setup.onopen();
-          // Object.assign(conn.peerConnection,setup);
-          // DC.dc = conn.peerConnection;
-          // Object.assign(DC.dc,setup);
-
-          //Object.assign(DC.dc, setup);
+          } else
+          console.log("Already init - skip setup");
           createRoom_ready(setup);
      });
      peer.on('disconnected', function () {
           console.log('Create room - peer disconnected');
-          //stat.innerHTML = "Connection lost. Please reconnect";
-          addData('Connection lost. Please reconnect');
+          console.log('Connection lost. Attempting reconnect');
 
+          // trying workaround from https://github.com/peers/peerjs/issues/650
+          this.disconnectBackoff = 1;
+          this.retrySocketConnection();
+
+          if (false) { // original code before workaround above
           // Workaround for peer.reconnect deleting previous id
+               console.log('Restoring peer id from ' + peer.id + " to " + lastPeerId);//Connection lost. Attempting reconnect');
           peer.id = lastPeerId;
-          peer._lastServerId = lastPeerId;
           peer.reconnect();
+          }
      });
      peer.on('close', function () {
           console.log('Create room - peer closed');
           conn = null;
-          //stat.innerHTML = "Connection destroyed. Please refresh";
-          addData('Connection destroyed');
+          console.log('Connection destroyed');
      });
      peer.on('error', function (err) {
-          console.log('Create room - peer error');
-          addData(err);
-          //alert('' + err);
+          console.log('Create room - peer error: ' + err);
+          //addData(err);
+
+          // trying workaround from https://github.com/peers/peerjs/issues/650
+          this.peer.on('error', (e) => {
+               if (FATAL_ERRORS.includes(e.type)) {
+                 this.reconnectTimeout(e); // this function waits then tries the entire connection over again
+               } else {
+                 console.log('Non fatal error: ',  e.type);
+               }
+             });          
+
      });
 
 
@@ -120,6 +148,11 @@ function createRoom_ready(setup) {
           setup.onclose();
           addData("Connection reset -- Awaiting connection...");
           conn = null;
+     });
+     // Handle errors
+     conn.on('error', function (errordata) {
+          //console.log("Join room -conn data: " + JSON.stringify(data));
+          console.log("Connection error: " + errordata);
      });
 }
 
@@ -183,60 +216,18 @@ DC.joinRoom = function (setup) {
      _joinRoom(setup);
 }
 
-// function _xjoinRoom() {
 
-//   console.log('Join room - open');
-//   peer = new Peer();
-// //   null, {
-// //     debug: 2
-// // });
-
-// peer.on('open', function (id) {
-//     // Workaround for peer.reconnect deleting previous id
-//     if (peer.id === null) {
-//         console.log('Received null id from peer open');
-//         peer.id = lastPeerId;
-//     } else {
-//         lastPeerId = peer.id;
-//     }
-
-//     console.log('ID: ' + peer.id);
-// });
-// peer.on('connection', function (c) {
-//     // Disallow incoming connections
-//     c.on('open', function() {
-//         c.send("Sender does not accept incoming connections");
-//         setTimeout(function() { c.close(); }, 500);
-//     });
-//     //readyready():
-// });
-// peer.on('disconnected', function () {
-//     //stat.innerHTML = "Connection lost. Please reconnect";
-//     console.log('Connection lost. Please reconnect');
-
-//     // Workaround for peer.reconnect deleting previous id
-//     peer.id = lastPeerId;
-//     peer._lastServerId = lastPeerId;
-//     peer.reconnect();
-// });
-// peer.on('close', function() {
-//     conn = null;
-//     //stat.innerHTML = "Connection destroyed. Please refresh";
-//     console.log('Connection destroyed');
-// });
-// peer.on('error', function (err) {
-//     console.log(err);
-//     alert('' + err);
-// });
+var already_init = false;
 
 function _joinRoom(setup) {
      // Close old connection
      if (conn) {
+          console.log("Closing old connection");
           conn.close();
      }
 
      addData("Creating peerjs obj");
-     peer = new Peer(); //null);
+     peer = new Peer(null,peerconfig); //null);
 
 
      peer.on('open', function (id) {
@@ -244,69 +235,89 @@ function _joinRoom(setup) {
           // Workaround for peer.reconnect deleting previous id
           myPeerId = id;
           if (peer.id === null) {
-               console.log('Received null id from peer open');
+               console.log('Received null id from peer open, restoring to last peer id: ' + lastPeerId);
                peer.id = lastPeerId;
           } else {
+               console.log('Remembering peer.id for potential disconnects.');
                lastPeerId = peer.id;
           }
 
-          console.log('ID: ' + peer.id);
-
+          console.log('Joined with peer.id: ' + peer.id);
 
           // Create connection to destination peer specified in the input field
-          
-          
           // DataConnection object
-          conn = peer.connect(scpice.value, {
+          // Close old connection
+          if (conn) {
+               console.log('Closing old connection');
+               conn.close();
+               // should automatically try to rejoin in the 'onclose' event
+          } else {
+               console.log('Connecting to peer.id: ' + scpice.value);
+               conn = peer.connect(getConnectIDFromInviteCode(scpice.value), {
                reliable: true
           });
-          
-          //Object.assign(DC.dc, setup);
-
-          addData("Connected (?)");
+          }
+          //addData("Connected (?)");
 
           conn.on('open', function () {
-               //stat.innerHTML = "Connected to: " + conn.peer;
-               console.log("Join room -conn open to: " + conn.peer);
-               // Object.assign(conn.peerConnection,setup);
-               // DC.dc = conn.peerConnection;
-               // Object.assign(DC.dc,setup);
+               console.log("Join room - connected to peer.id: " + conn.peer);
+               if (!already_init) {
+                    already_init = true;
                setup.onopen();
-               
-               // Check URL params for comamnds that should be sent immediately
-               // var command = getUrlParam("command");
-               // if (command)
-               //     conn.send(command);
+               } else
+               console.log("Already init - skip setup");
            });
            // Handle incoming data (messages only since this is the signal sender)
            conn.on('data', function (data) {
                //console.log("Join room -conn data: " + JSON.stringify(data));
                setup.onmessage(data);
-
+           });
+           // Handle errors
+           conn.on('error', function (errordata) {
+               //console.log("Join room -conn data: " + JSON.stringify(data));
+               console.log("Connection error: " + errordata);
            });
            conn.on('close', function () {
-               console.log("Join room -conn closed");
-               //setup.onclose();
-
-               //stat.innerHTML = "Connection closed";
+               console.log("Join room -conn closed... try to rejoin! :)");
+               // try to rejoin
+               conn = peer.connect(getConnectIDFromInviteCode(scpice.value), {
+                    reliable: true
            });
- //recvId.innerHTML = "ID: <br>" + peer.id;
-          //scpicehost.value = peer.id;
 
-          //addData("Awaiting connection...");
-
-          //addData("Connected to: " + conn.peer);
-          //console.log("Connected to: " + conn.peer);
-
-          // // Check URL params for comamnds that should be sent immediately
-          // var command = getUrlParam("command");
-          // if (command)
-          //     conn.send(command);
+           });
      });
      // Handle incoming data (messages only since this is the signal sender)
      peer.on('data', function (data) {
-          console.log("Join room -peer data:" + JSON.stringify(data));
+          //console.log("Join room -peer data:" + JSON.stringify(data));
           setup.onmessage(data);
+     });
+     peer.on('disconnected', function () {
+          console.log('Join room - peer disconnected');
+          console.log('Connection lost. Attempting reconnect');
+
+          // trying workaround from https://github.com/peers/peerjs/issues/650
+          this.disconnectBackoff = 1;
+          this.retrySocketConnection();
+
+          if (false) { // original code before workaround above
+               // Workaround for peer.reconnect deleting previous id
+               console.log('Restoring peer id from ' + peer.id + " to " + lastPeerId);//Connection lost. Attempting reconnect');
+               peer.id = lastPeerId;
+               peer.reconnect();
+          }
+     });
+     peer.on('error', function (err) {
+          console.log('Join room - peer error: ' + err);
+          //addData(err);
+
+          // trying workaround from https://github.com/peers/peerjs/issues/650
+          this.peer.on('error', (e) => {
+               if (FATAL_ERRORS.includes(e.type)) {
+                 this.reconnectTimeout(e); // this function waits then tries the entire connection over again
+               } else {
+                 console.log('Non fatal error: ',  e.type);
+               }
+             });          
      });
      peer.on('close', function () {
           addData("Join room -peer closed");
@@ -476,11 +487,26 @@ DC.join = function (joinid, scpice, setup) {
      // }
 
 };
+
+var debugdroppedpackets = false;
+var droppedpacketcounter = 0;
+var maxpacketcount = 300;
+
 DC.send = function(data){
-     //DC.log("DC.send send data " + JSON.stringify(data));
+
+     if (debugdroppedpackets == true) {
+          droppedpacketcounter++;
+          if (droppedpacketcounter > maxpacketcount) {
+               droppedpacketcounter = 0;
+               console.log("***DROPPING data " + JSON.stringify(data));
+               return;
+          }
+     }
+     
+     console.log("Sending data " + JSON.stringify(data));
 
      //if (DC.dc && DC.dc.readyState=="open" && data) {
-          conn.send(data);
+          if (conn) conn.send(data);
      //conn.dataChannel.send(data);
      //DC.dc.send(JSON.stringify(data));
      
