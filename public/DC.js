@@ -17,12 +17,20 @@ var conn = null;
 //var peerconfig = null;
 var eu_turn_server = 'turn:eu-0.turn.peerjs.com:3478?transport=tcp';
 var na_turn_server = 'turn:us-0.turn.peerjs.com:3478?transport=tcp';
+var peer_username = 'peerjs';
+var peer_password = 'peerjsp';
+var cuvee_server = 'turn:signaling.cuveebits.com:5349?transport=tcp';
+var cuvee_username = '1676412243:fakeuser';
+var cuvee_password = 'ZmE4MjVkNzFhNmYwZDc0NWFhMmRlZThkZTgwODY4MjU2OThkZTE5Mw==';
+
 var peerconfig = { 'host': '0.peerjs.com', 'debug': 0, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:us-0.turn.peerjs.com:3478?transport=tcp', username: 'peerjs', credential: 'peerjsp' }]}};
+
+
 //var peerconfig = { 'host': '0.peerjs.com', 'debug': 3, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:relay.metered.ca:80', username: '339b2c2c352953b59cd1800c', credential: 'cvf1xgDZRFU7E36I' }]}};
-//var peerconfig = { 'host': '0.peerjs.com', 'debug': 3, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:signaling.cuveebits.com:5349', username: '4fa4e982a4b2906b8b5e7be323c6b039014e840bcdc265c12771cd598961eef5', credential: '' }]}};
+//peerconfig = { 'host': '0.peerjs.com', 'debug': 3, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:signaling.cuveebits.com:5349', username: '1676412243:fakeuser', credential: 'ZmE4MjVkNzFhNmYwZDc0NWFhMmRlZThkZTgwODY4MjU2OThkZTE5Mw==' }]}};
 
 // error says both username and credential are required when using turn or turns
-//var peerconfig = { 'host': '0.peerjs.com', 'debug': 3, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:signaling.cuveebits.com:5349', credential: '4fa4e982a4b2906b8b5e7be323c6b039014e840bcdc265c12771cd598961eef5' }]}};
+//var peerconfig = { 'host': '0.peerjs.com', 'debug': 3, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:signaling.cuveebits.com:5349', username:'redential: '4fa4e982a4b2906b8b5e7be323c6b039014e840bcdc265c12771cd598961eef5' }]}};
 
 function createRoom(setup) {
      // Close old connection
@@ -70,7 +78,7 @@ function createRoom(setup) {
           addData("Connected");
           if (!already_init) {
                already_init = true;
-          setup.onopen();
+               setup.onopen();
           } else
           console.log("Already init - skip setup");
           createRoom_ready(setup);
@@ -84,10 +92,10 @@ function createRoom(setup) {
           this.retrySocketConnection();
 
           if (false) { // original code before workaround above
-          // Workaround for peer.reconnect deleting previous id
+               // Workaround for peer.reconnect deleting previous id
                console.log('Restoring peer id from ' + peer.id + " to " + lastPeerId);//Connection lost. Attempting reconnect');
-          peer.id = lastPeerId;
-          peer.reconnect();
+               peer.id = lastPeerId;
+               peer.reconnect();
           }
      });
      peer.on('close', function () {
@@ -254,8 +262,8 @@ function _joinRoom(setup) {
           } else {
                console.log('Connecting to peer.id: ' + scpice.value);
                conn = peer.connect(getConnectIDFromInviteCode(scpice.value), {
-               reliable: true
-          });
+                    reliable: true
+               });
           }
           //addData("Connected (?)");
 
@@ -263,7 +271,7 @@ function _joinRoom(setup) {
                console.log("Join room - connected to peer.id: " + conn.peer);
                if (!already_init) {
                     already_init = true;
-               setup.onopen();
+                    setup.onopen();
                } else
                console.log("Already init - skip setup");
            });
@@ -282,8 +290,8 @@ function _joinRoom(setup) {
                // try to rejoin
                conn = peer.connect(getConnectIDFromInviteCode(scpice.value), {
                     reliable: true
-           });
-
+               });
+    
            });
      });
      // Handle incoming data (messages only since this is the signal sender)
@@ -324,7 +332,6 @@ function _joinRoom(setup) {
           setup.onclose();
      });
 };
-
 
 
 /**

@@ -369,6 +369,8 @@ setup = {
 
   },
   onmessage:function(e) {
+     console.log("Received peer data: " + JSON.stringify(e));
+
     let ping, recTime = performance.now()
     // orig - var data = JSON.parse(e.data)
     var data = e; // JSON.parse(e)

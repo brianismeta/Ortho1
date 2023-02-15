@@ -482,7 +482,21 @@ DC.join = function (joinid, scpice, setup) {
      // }
 
 };
+
+var debugdroppedpackets = true;
+var droppedpacketcounter = 0;
+
 DC.send = function(data){
+
+     if (debugdroppedpackets == true) {
+          droppedpacketcounter++;
+          if (droppedpacketcounter > 10) {
+               droppedpacketcounter = 0;
+               console.log("***DROPPING data " + JSON.stringify(data));
+               return;
+          }
+     }
+     
      console.log("Sending data " + JSON.stringify(data));
 
      //if (DC.dc && DC.dc.readyState=="open" && data) {

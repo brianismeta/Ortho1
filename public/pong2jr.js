@@ -36,6 +36,9 @@ rollbackState={}
 rollbackInputs=[]
 yoInputLastDir=0;
 
+function logStates(szLocation) {
+     console.log("logStates("+szLocation+") myInputs="+JSON.stringify(myInputs)+" yoInputs=" + JSON.stringify(yoInputs) + " rollbackState=" + JSON.stringify(rollbackState) + " rollbackInputs=" + JSON.stringify(rollbackInputs) + " yoInputLastDir=" + yoInputLastDir);
+}
 scaleFactor=1
 paddleH=60
 paddleW=20
@@ -604,17 +607,21 @@ setup = {
         break;
       case "input":
 
+      logStates("input");
         if (rollbackInputs.length) {
           let myInput = rollbackInputs.shift()
           let yoInput = data.input
           loadRollbackState()
 
-          if (yoInput.frame != myInput.frame) console.log("sync error waah",myInput.frame,yoInput.frame)
+          // this should be a serious problem too -- shouldn't process it!
+          if (yoInput.frame != myInput.frame) 
+               console.log("sync error waah",myInput.frame,yoInput.frame)
 
           processGameLogic(myInput,yoInput)
           storeRollbackState()
 
           // from here, run the rest of the buffer again
+          //?
           yoInputLastDir = yoInput.dir
 
           for (let i=0;i<rollbackInputs.length;i++) {
@@ -648,9 +655,11 @@ function initBuffer(){
 
 
 function processFrame(){
-// this is the key game loop -- if game ends, need to break this loop.
+     // this is the key game loop -- if game ends, need to break this loop.
 
-if (scoreLeft >=5 || scoreRight >= 5) {
+     logStates("processFrame");
+
+     if (scoreLeft >=5 || scoreRight >= 5) {
      if (scoreLeft > scoreRight) {
           gameEnded = 1;
           leftWinner = 1;
@@ -658,9 +667,9 @@ if (scoreLeft >=5 || scoreRight >= 5) {
           gameEnded = 1;
           rightWinner = 1;
      }
-}
+     }
 
-if (gameEnded)
+     if (gameEnded)
      return;
   let yoInput,myInput;
   if (yoInputs.length==0) {
@@ -685,7 +694,17 @@ if (gameEnded)
 
   myInput = myInputs.shift()
 
-  if (myInput.frame != yoInput.frame) {console.log("SYNC ERROR AHHH", myInput,yoInput); return}
+     if (myInput.frame != yoInput.frame) {
+          // if the logic works as expected, then we expect that yoInput frame could be higher
+          // because the response was dropped somewhere on the way here.
+          // so i think we need to push the myInput back onto the stack until
+          // we receive a matching frame -- AND tell the other side to start re-sending from 
+          // that frame number.
+          myInputs.push( myinput ); // BC - I added this here because I think we need it...
+
+          console.log("SYNC ERROR AHHH", myInput,yoInput); 
+          return
+     }
 
   processGameLogic(myInput,yoInput)
 

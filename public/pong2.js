@@ -363,6 +363,7 @@ function avg(a){
 
 setup = {
   onopen: function(){
+     console.log("setup.onopen");
     connected=true;
     requestAnimationFrame(draw)
     debuglog.style.display='none';
@@ -377,12 +378,15 @@ setup = {
     }
   },
   onclose: function(){
+     console.log("setup.onclose");
     connected=false;
     debuglog.innerHTML = '[ disconnected &mdash; refresh to play again ]'
     debuglog.style.display='inline-block';
 
   },
   onmessage:function(e) {
+     console.log("Received peer data: " + JSON.stringify(e));
+
     let ping, recTime = performance.now()
     // orig - var data = JSON.parse(e.data)
     var data = e; // JSON.parse(e)
@@ -979,6 +983,10 @@ function getConnectIDFromInviteCode() {
      }
 
 }
+
+
+var adjustpeerconfig = true;
+
 function applyLocationToInviteCode() {
      var location = document.getElementById("location").value;
      //setBackgroundImage(imgid);
@@ -988,16 +996,26 @@ function applyLocationToInviteCode() {
      } else {
           guid.value = location + '-' + guid.value;
      }
-     if (location == 'EU') {
-          peerconfig.config.iceServers[1].urls = eu_turn_server;
-          //var eu_turn_server = 'turn:eu-0.turn.peerjs.com:3478?transport=tcp';
-          //var na_turn_server = 'turn:us-0.turn.peerjs.com:3478?transport=tcp';
-          
-     } else {
-          peerconfig.config.iceServers[1].urls = na_turn_server;
-
+     if (adjustpeerconfig) {
+          if (location == 'EU') {
+               peerconfig.config.iceServers[1].urls = eu_turn_server;
+               peerconfig.config.iceServers[1].username = peer_username;
+               peerconfig.config.iceServers[1].credential = peer_password;
+               //var eu_turn_server = 'turn:eu-0.turn.peerjs.com:3478?transport=tcp';
+               //var na_turn_server = 'turn:us-0.turn.peerjs.com:3478?transport=tcp';
+               
+          } else if (location == 'NA') {
+               peerconfig.config.iceServers[1].urls = na_turn_server;
+               peerconfig.config.iceServers[1].username = peer_username;
+               peerconfig.config.iceServers[1].credential = peer_password;
+          } else if (location == 'CU') {
+               peerconfig.config.iceServers[1].urls = cuvee_server;
+               peerconfig.config.iceServers[1].username = cuvee_username;
+               peerconfig.config.iceServers[1].credential = cuvee_password;
+          }
      }
 }
+
 window.onload=window.onresize=function(){
      onloadstuff();
   scaleFactor=Math.max(1,w/(window.innerWidth-16),h/(window.innerHeight*0.98))
@@ -1015,26 +1033,6 @@ window.onload=window.onresize=function(){
      //document.body.style.backgroundImage = "url("+imgs[imgid*2]+")";
      //document.body.style.backgroundSize = "cover";
 });
-
-function applyInviteCodeToPeerConfig() {
-     var guid = document.getElementById("scpice");
-     var location;
-     if (guid.value.substr(2,1) == '-') {
-          location  = guid.value.substr(0,2);
-     } else {
-          location = 'US';
-     }
-     if (location == 'EU') {
-          peerconfig.config.iceServers[1].urls = eu_turn_server;
-          //var eu_turn_server = 'turn:eu-0.turn.peerjs.com:3478?transport=tcp';
-          //var na_turn_server = 'turn:us-0.turn.peerjs.com:3478?transport=tcp';
-          
-     } else {
-          peerconfig.config.iceServers[1].urls = na_turn_server;
-
-     }
-
-}
 document.getElementById("scpice").addEventListener("change",()=>{
      //alert("change!");
      applyInviteCodeToPeerConfig();
@@ -1042,10 +1040,44 @@ document.getElementById("scpice").addEventListener("change",()=>{
      //document.body.style.backgroundImage = "url("+imgs[imgid*2]+")";
      //document.body.style.backgroundSize = "cover";
 });
-
-
-
 }
+
+function applyInviteCodeToPeerConfig() {
+     if (adjustpeerconfig) {
+          var guid = document.getElementById("scpice");
+          var location;
+          if (guid.value.substr(2,1) == '-') {
+               location  = guid.value.substr(0,2);
+          } else {
+               location = 'US';
+          }
+          if (location == 'EU') {
+               peerconfig.config.iceServers[1].urls = eu_turn_server;
+               peerconfig.config.iceServers[1].username = peer_username;
+               peerconfig.config.iceServers[1].credential = peer_password;
+
+               //var eu_turn_server = 'turn:eu-0.turn.peerjs.com:3478?transport=tcp';
+               //var na_turn_server = 'turn:us-0.turn.peerjs.com:3478?transport=tcp';
+               
+          } else if (location == 'NA') {
+               peerconfig.config.iceServers[1].urls = na_turn_server;
+               peerconfig.config.iceServers[1].username = peer_username;
+               peerconfig.config.iceServers[1].credential = peer_password;
+
+          } else if (location == 'CU') {
+               peerconfig.config.iceServers[1].urls = cuvee_server;
+               peerconfig.config.iceServers[1].username = cuvee_username;
+               peerconfig.config.iceServers[1].credential = cuvee_password;
+
+          }
+     }
+}
+
+
+
+
+
+
 
 
 
