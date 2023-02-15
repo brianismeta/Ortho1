@@ -23,7 +23,13 @@ var cuvee_server = 'turn:signaling.cuveebits.com:5349?transport=tcp';
 var cuvee_username = '1676412243:fakeuser';
 var cuvee_password = 'ZmE4MjVkNzFhNmYwZDc0NWFhMmRlZThkZTgwODY4MjU2OThkZTE5Mw==';
 
-var peerconfig = { 'host': '0.peerjs.com', 'debug': 0, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:us-0.turn.peerjs.com:3478?transport=tcp', username: 'peerjs', credential: 'peerjsp' }]}};
+var peerconfig = { 'host': '0.peerjs.com', 'debug': 0, 
+     'config' :  { 
+          'iceServers': [
+               { 'urls': 'stun:stun.l.google.com:19302' }, 
+               { 'urls': 'turn:us-0.turn.peerjs.com:3478?transport=tcp', username: 'peerjs', credential: 'peerjsp' }],
+          iceTransportPolicy: "relay"
+     }};
 
 
 //var peerconfig = { 'host': '0.peerjs.com', 'debug': 3, 'config' :  { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'turn:relay.metered.ca:80', username: '339b2c2c352953b59cd1800c', credential: 'cvf1xgDZRFU7E36I' }]}};
