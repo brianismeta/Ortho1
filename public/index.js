@@ -53,7 +53,7 @@ function getOrthoverseLandInformation(index) {
     })
     .then((result) => {
       // Good result returns null in this case
-      console.log("Good: " +result);
+      //console.log("Good: " +result);
 
       // Using the decodeURIComponent function in combination with regex to convert the hex value into utf8 value
       sOrthoverseLandInformation = decodeURIComponent(
@@ -117,7 +117,7 @@ function getOrthoverseCastleLevel(index) {
     })
     .then((result) => {
       // Good result returns null in this case
-      console.log("Good: " +result);
+      //console.log("Good: " +result);
 
       // Using the decodeURIComponent function in combination with regex to convert the hex value into utf8 value
       iOrthoverseCastleLevel = convertHexToDecimal(result.substr(2));
@@ -390,9 +390,7 @@ window.addEventListener("load", ()=>
      // });
   if(connectButton)  connectButton.addEventListener("click", ()=>
     {
-     gtag('event', 'click_connect', {
-          'event_category': 'pong_main'
-        });
+     track_click_connect();
 
       if (typeof window.ethereum !== "undefined") {
         //startLoading();
@@ -408,10 +406,8 @@ window.addEventListener("load", ()=>
     });
   if(switchButton) switchButton.addEventListener("click", ()=> 
   {
-     gtag('event', 'click_switchchain', {
-          'event_category': 'pong_main'
-        });
-         switchMainNet(); 
+     track_switch_chain();
+     switchMainNet(); 
     
   }
   );
@@ -420,43 +416,22 @@ window.addEventListener("load", ()=>
     getOrthoverseCastleLevel(0);
     getOrthoverseLandInformation(0);
 
-  //   if (sOrthoverseLandInformation == null ||
-  //     iOrthoverseCastleLevel == null) {
-  //       orthoverseStatus.innerHTML = 'No Orthoverse land detected.  Reveal your land at <a href="https://orthoverse.io">orthoverse.io</a>';
-  //     }
-  // }
   });
     
   if (playButton) playButton.addEventListener("click",() => {
     //alert("Not implemented!");
-    gtag('event', 'click_play', {
-     'event_category': 'pong_main'
-   });
-       location.href = "pong.html";
+     track_click_play();
+     location.href = "main.html";
   });
     if (orthoButton) orthoButton.addEventListener("click", ()=> {
-//    AddOrthoTokenToWallet();
-    // var json = getOrthoverseLandInformation(0);
-    // var level= getOrthoverseCastleLevel(0);
-// Note that above are async, so may not be finished yet
-    //alert(json);
-//alert(level);
 
   });
 
   });
 
 function RevealOrthoverseLand() {
-//  alert(sOrthoverseLandInformation);
   var sImgURL = sOrthoverseLandInformation.replace("metadata","img").replace("-0","-"+iOrthoverseCastleLevel).replace(".json",".png").replace("0x","");
-//  alert(sImgURL);
   orthoverseland.innerHTML = "<img src='" + sImgURL + "' class='img-fluid' />";
-
   showland.classList.remove("d-none");
 
 }
-//$(connectButton).click(switchMainNet);
-// switchButton.addEventListener("click",() => {
-//   switchMainNet();
-// });
-
