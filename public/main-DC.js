@@ -41,33 +41,33 @@ var peerconfig = { 'host': '0.peerjs.com', 'debug': 0,
 function createRoom(setup) {
      // Close old connection
      if (conn) {
-          console.log("Closing old connection");
+          MetaLog.log("Closing old connection");
           conn.close();
      }
 
      // Create own peer object with connection to shared PeerJS server
-     console.log('Create room - init');
+     MetaLog.log('Create room - init');
      peer = new Peer(null,peerconfig);
 
      peer.on('open', function (id) {
-          console.log('Create room - open');
+          MetaLog.log('Create room - open');
           // Workaround for peer.reconnect deleting previous id
           myPeerId = id;
           if (peer.id === null) {
-               console.log('Received null id from peer open, restoring to last peer id: ' + lastPeerId);
+               MetaLog.log('Received null id from peer open, restoring to last peer id: ' + lastPeerId);
                peer.id = lastPeerId;
           } else {
-               console.log('Remembering peer.id for potential disconnects.');
+               MetaLog.log('Remembering peer.id for potential disconnects.');
                lastPeerId = peer.id;
           }
 
-          console.log('Created peer.id: ' + peer.id);
+          MetaLog.log('Created peer.id: ' + peer.id);
           scpicehost.value = peer.id;
           applyLocationToInviteCode();
-          console.log("Awaiting connection...");
+          MetaLog.log("Awaiting connection...");
      });
      peer.on('connection', function (c) {
-          console.log('Create room - peer connection');
+          MetaLog.log('Create room - peer connection');
 
           // Allow only a single connection
           if (conn && conn.open) {
@@ -86,12 +86,12 @@ function createRoom(setup) {
                already_init = true;
                setup.onopen();
           } else
-          console.log("Already init - skip setup");
+          MetaLog.log("Already init - skip setup");
           createRoom_ready(setup);
      });
      peer.on('disconnected', function () {
-          console.log('Create room - peer disconnected');
-          console.log('Connection lost. Attempting reconnect');
+          MetaLog.log('Create room - peer disconnected');
+          MetaLog.log('Connection lost. Attempting reconnect');
 
           // trying workaround from https://github.com/peers/peerjs/issues/650
           this.disconnectBackoff = 1;
@@ -99,18 +99,18 @@ function createRoom(setup) {
 
           if (false) { // original code before workaround above
                // Workaround for peer.reconnect deleting previous id
-               console.log('Restoring peer id from ' + peer.id + " to " + lastPeerId);//Connection lost. Attempting reconnect');
+               MetaLog.log('Restoring peer id from ' + peer.id + " to " + lastPeerId);//Connection lost. Attempting reconnect');
                peer.id = lastPeerId;
                peer.reconnect();
           }
      });
      peer.on('close', function () {
-          console.log('Create room - peer closed');
+          MetaLog.log('Create room - peer closed');
           conn = null;
-          console.log('Connection destroyed');
+          MetaLog.log('Connection destroyed');
      });
      peer.on('error', function (err) {
-          console.log('Create room - peer error: ' + err);
+          MetaLog.log('Create room - peer error: ' + err);
           //addData(err);
 
           // trying workaround from https://github.com/peers/peerjs/issues/650
@@ -118,7 +118,7 @@ function createRoom(setup) {
                if (FATAL_ERRORS.includes(e.type)) {
                  this.reconnectTimeout(e); // this function waits then tries the entire connection over again
                } else {
-                 console.log('Non fatal error: ',  e.type);
+                 MetaLog.log('Non fatal error: ',  e.type);
                }
              });          
 
@@ -129,14 +129,14 @@ function createRoom(setup) {
 
 function createRoom_ready(setup) {
      conn.on('data', function (data) {
-          //console.log('Create room - conn data: ' + JSON.stringify(data));
+          //MetaLog.log('Create room - conn data: ' + JSON.stringify(data));
           //addData("Data received");
           setup.onmessage(data);
           //       var cueString = "<span class=\"cueMsg\">Cue: </span>";
           //       switch (data.substr(0,5)) {
           //           case 'data:':
           // //                                addData(data);
-          // console.log(data.substr(0,50))
+          // MetaLog.log(data.substr(0,50))
           //               addMessage('<img src="' + data + '" />')
           // //                                addMessage(cueString + data);
           //               break;
@@ -158,15 +158,15 @@ function createRoom_ready(setup) {
           //       };
      });
      conn.on('close', function () {
-          console.log('Create room - conn closed');
+          MetaLog.log('Create room - conn closed');
           setup.onclose();
           addData("Connection reset -- Awaiting connection...");
           conn = null;
      });
      // Handle errors
      conn.on('error', function (errordata) {
-          //console.log("Join room -conn data: " + JSON.stringify(data));
-          console.log("Connection error: " + errordata);
+          //MetaLog.log("Join room -conn data: " + JSON.stringify(data));
+          MetaLog.log("Connection error: " + errordata);
      });
 }
 
@@ -183,13 +183,13 @@ function createRoom_ready(setup) {
 //   peer.on('open', function (id) {
 //       // Workaround for peer.reconnect deleting previous id
 //       if (peer.id === null) {
-//           console.log('Received null id from peer open');
+//           MetaLog.log('Received null id from peer open');
 //           peer.id = lastPeerId;
 //       } else {
 //           lastPeerId = peer.id;
 //       }
 
-//       console.log('ID: ' + peer.id);
+//       MetaLog.log('ID: ' + peer.id);
 //   });
 //   peer.on('connection', function (c) {
 //       // Disallow incoming connections
@@ -200,7 +200,7 @@ function createRoom_ready(setup) {
 //   });
 //   peer.on('disconnected', function () {
 //       stat.innerHTML = "Connection lost. Please reconnect";
-//       console.log('Connection lost. Please reconnect');
+//       MetaLog.log('Connection lost. Please reconnect');
 
 //       // Workaround for peer.reconnect deleting previous id
 //       peer.id = lastPeerId;
@@ -210,10 +210,10 @@ function createRoom_ready(setup) {
 //   peer.on('close', function() {
 //       conn = null;
 //       stat.innerHTML = "Connection destroyed. Please refresh";
-//       console.log('Connection destroyed');
+//       MetaLog.log('Connection destroyed');
 //   });
 //   peer.on('error', function (err) {
-//       console.log(err);
+//       MetaLog.log(err);
 //       alert('' + err);
 //   });
 // };
@@ -236,7 +236,7 @@ var already_init = false;
 function _joinRoom(setup) {
      // Close old connection
      if (conn) {
-          console.log("Closing old connection");
+          MetaLog.log("Closing old connection");
           conn.close();
      }
 
@@ -245,28 +245,28 @@ function _joinRoom(setup) {
 
 
      peer.on('open', function (id) {
-          console.log('Join room - open');
+          MetaLog.log('Join room - open');
           // Workaround for peer.reconnect deleting previous id
           myPeerId = id;
           if (peer.id === null) {
-               console.log('Received null id from peer open, restoring to last peer id: ' + lastPeerId);
+               MetaLog.log('Received null id from peer open, restoring to last peer id: ' + lastPeerId);
                peer.id = lastPeerId;
           } else {
-               console.log('Remembering peer.id for potential disconnects.');
+               MetaLog.log('Remembering peer.id for potential disconnects.');
                lastPeerId = peer.id;
           }
 
-          console.log('Joined with peer.id: ' + peer.id);
+          MetaLog.log('Joined with peer.id: ' + peer.id);
 
           // Create connection to destination peer specified in the input field
           // DataConnection object
           // Close old connection
           if (conn) {
-               console.log('Closing old connection');
+               MetaLog.log('Closing old connection');
                conn.close();
                // should automatically try to rejoin in the 'onclose' event
           } else {
-               console.log('Connecting to peer.id: ' + scpice.value);
+               MetaLog.log('Connecting to peer.id: ' + scpice.value);
                conn = peer.connect(getConnectIDFromInviteCode(scpice.value), {
                     reliable: true
                });
@@ -274,25 +274,25 @@ function _joinRoom(setup) {
           //addData("Connected (?)");
 
           conn.on('open', function () {
-               console.log("Join room - connected to peer.id: " + conn.peer);
+               MetaLog.log("Join room - connected to peer.id: " + conn.peer);
                if (!already_init) {
                     already_init = true;
                     setup.onopen();
                } else
-               console.log("Already init - skip setup");
+               MetaLog.log("Already init - skip setup");
            });
            // Handle incoming data (messages only since this is the signal sender)
            conn.on('data', function (data) {
-               //console.log("Join room -conn data: " + JSON.stringify(data));
+               //MetaLog.log("Join room -conn data: " + JSON.stringify(data));
                setup.onmessage(data);
            });
            // Handle errors
            conn.on('error', function (errordata) {
-               //console.log("Join room -conn data: " + JSON.stringify(data));
-               console.log("Connection error: " + errordata);
+               //MetaLog.log("Join room -conn data: " + JSON.stringify(data));
+               MetaLog.log("Connection error: " + errordata);
            });
            conn.on('close', function () {
-               console.log("Join room -conn closed... try to rejoin! :)");
+               MetaLog.log("Join room -conn closed... try to rejoin! :)");
                // try to rejoin
                conn = peer.connect(getConnectIDFromInviteCode(scpice.value), {
                     reliable: true
@@ -302,12 +302,12 @@ function _joinRoom(setup) {
      });
      // Handle incoming data (messages only since this is the signal sender)
      peer.on('data', function (data) {
-          //console.log("Join room -peer data:" + JSON.stringify(data));
+          //MetaLog.log("Join room -peer data:" + JSON.stringify(data));
           setup.onmessage(data);
      });
      peer.on('disconnected', function () {
-          console.log('Join room - peer disconnected');
-          console.log('Connection lost. Attempting reconnect');
+          MetaLog.log('Join room - peer disconnected');
+          MetaLog.log('Connection lost. Attempting reconnect');
 
           // trying workaround from https://github.com/peers/peerjs/issues/650
           this.disconnectBackoff = 1;
@@ -315,13 +315,13 @@ function _joinRoom(setup) {
 
           if (false) { // original code before workaround above
                // Workaround for peer.reconnect deleting previous id
-               console.log('Restoring peer id from ' + peer.id + " to " + lastPeerId);//Connection lost. Attempting reconnect');
+               MetaLog.log('Restoring peer id from ' + peer.id + " to " + lastPeerId);//Connection lost. Attempting reconnect');
                peer.id = lastPeerId;
                peer.reconnect();
           }
      });
      peer.on('error', function (err) {
-          console.log('Join room - peer error: ' + err);
+          MetaLog.log('Join room - peer error: ' + err);
           //addData(err);
 
           // trying workaround from https://github.com/peers/peerjs/issues/650
@@ -329,7 +329,7 @@ function _joinRoom(setup) {
                if (FATAL_ERRORS.includes(e.type)) {
                  this.reconnectTimeout(e); // this function waits then tries the entire connection over again
                } else {
-                 console.log('Non fatal error: ',  e.type);
+                 MetaLog.log('Non fatal error: ',  e.type);
                }
              });          
      });
@@ -347,7 +347,7 @@ function _joinRoom(setup) {
 
 function addData(data) {
 
-     console.log(data);
+     MetaLog.log(data);
 }
 
 
@@ -501,11 +501,13 @@ DC.join = function (joinid, scpice, setup) {
 
 };
 
-var debugdroppedpackets = false;
+// read value in main-util.js from local storage
+//var debugdroppedpackets = false;
 var droppedpacketcounter = 0;
 var maxpacketcount = 300;
 
-var debugreorderedpackets = false;
+// read value in main-util.js from local storage
+//var debugreorderedpackets = false;
 var reorderedpacketscounter = 0;
 var maxreorderedpacketscount = 20;
 var resendpacketdelayms = 200;
@@ -515,7 +517,7 @@ DC.send = function(data, resent=false){
           droppedpacketcounter++;
           if (droppedpacketcounter > maxpacketcount) {
                droppedpacketcounter = 0;
-               console.log("***DROPPING data " + JSON.stringify(data));
+               PacketLog.log("***DROPPING data " + JSON.stringify(data));
                return;
           }
      }
@@ -523,11 +525,12 @@ DC.send = function(data, resent=false){
           reorderedpacketscounter++;
           if (reorderedpacketscounter > maxreorderedpacketscount) {
                reorderedpacketscounter = 0;
-               console.log("*** reordering packet" + + JSON.stringify(data));
+               PacketLog.log("*** reordering packet" + JSON.stringify(data));
                window.setTimeout(DC.send(data,true),resendpacketdelayms);
                return;
           }
      }
      
+     PacketLog.log("Send: " + JSON.stringify(data));
      if (conn) conn.send(data);
 }

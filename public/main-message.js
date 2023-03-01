@@ -2,7 +2,7 @@
 
 setup = {
      onopen: function(){
-        console.log("setup.onopen");
+        MetaLog.log("setup.onopen");
        connected=true;
        requestAnimationFrame(draw)
        debuglog.style.display='none';
@@ -18,14 +18,14 @@ setup = {
        }
      },
      onclose: function(){
-        console.log("setup.onclose");
+        MetaLog.log("setup.onclose");
        connected=false;
        debuglog.innerHTML = '[ disconnected &mdash; refresh to play again ]'
        debuglog.style.display='inline-block';
    
      },
      onmessage:function(e) {
-        //console.log("Received peer data: " + JSON.stringify(e));
+        //MetaLog.log("Received peer data: " + JSON.stringify(e));
    
        let ping, recTime = performance.now()
        // orig - var data = JSON.parse(e.data)
@@ -52,6 +52,39 @@ setup = {
         // ACK sent from HOSTER to JOINER with seed and buffersize
         // game starts
    
+          case "challenge":
+
+               if (data.sign_challenge != null) {
+                    alert("Enemy has requested that you verify your identity by signing a message.");
+                    _promEthereumPersonalSign(data.sign_challenge)
+                    .then(function (response) {
+                         send({type:"challenge_response", response});// result = datums;
+                         //return(datums);
+                    })
+                    .catch(function (err) {
+                         MetaLog.error('Error retrieving Land API', err.statusText);
+                         result = null;
+                         //return null;
+                    });
+               
+               }
+               break;
+          case "challenge_response":
+               alert("Enemy has responded.");
+               if (data.response != null) {
+                    _promEthereumPersonalVerify(sign_challenge,data.response).then(function(response) {
+                         if (response.toUpperCase() == "0X" + yourwallet.toUpperCase()) {
+                              alert("Enemy has verified control over account " + yourwallet);
+                         } else {
+                              alert("Enemy has not verified control over account " + yourwallet);
+                         }
+                    }).catch(function(err) {
+                         alert("Error occurred during verification");
+                    })
+               }
+               break;
+
+
          case "version":
    
           if (data.version != version) {
@@ -71,8 +104,8 @@ setup = {
              //
              // Receives the wallet address of the GUEST, so can display it on the screen
              //
-             //console.log("Received Version. Sending SYN");
-             console.log("Received Version. Sending ACKVERSION"); 
+             //MetaLog.log("Received Version. Sending SYN");
+             MetaLog.log("Received Version. Sending ACKVERSION"); 
              yourwallet = data.walletAddress;
              ShowLand(yourwallet, false);
              //send({type:"SYN"})
@@ -105,8 +138,8 @@ setup = {
            }
            break;
         case "ACKVERSION":
-             //console.log("Received Version. Sending SYN");
-             console.log("Received ACKVERSION."); 
+             //MetaLog.log("Received Version. Sending SYN");
+             MetaLog.log("Received ACKVERSION."); 
              //yourwallet = data.walletAddress;
              //ShowLand(yourwallet, false);
              //send({type:"SYN"})
@@ -160,7 +193,7 @@ setup = {
              //
              // This indicates that the GUEST is READY, and the HOST can now start the game
              //
-             console.log("Received READY."); // Sending SYN"); 
+             MetaLog.log("Received READY."); // Sending SYN"); 
           //    startBtn.style.display = "";
           //    document.getElementById("placeholderDiv1").style.display="";
 
@@ -178,7 +211,7 @@ setup = {
                break;
    
         case "SYN":
-           console.log("Received SYN. Sending SYNACK"); 
+           MetaLog.log("Received SYN. Sending SYNACK"); 
            send({type:"SYNACK"})
              // GUEST RECEIVES SYN SO GAME IS STARTING
              host_can_start.classList.add('hiddenMessage');//.style.display='none';
@@ -192,7 +225,7 @@ setup = {
          case "SYNACK":
            // repeatedly send start condition to establish average ping time
            if (pingStack.length < stacksize) {
-             console.log("Received SYNACK. Sending another SYN.  Ping size is " + pingStack.length); 
+             MetaLog.log("Received SYNACK. Sending another SYN.  Ping size is " + pingStack.length); 
              send({type:"SYN"})
              }
            else {
@@ -217,7 +250,7 @@ setup = {
                   ballStartSpeed = 7;
                   paddleH=120;
              }
-             console.log("Received SYNACK. Sending ACK with game details"); 
+             MetaLog.log("Received SYNACK. Sending ACK with game details"); 
              var walletAddress = softAddress(false);
    
              send({type:"ACK", seed, bufferSize, ballStartSpeed, imgid, walletAddress })
@@ -228,7 +261,7 @@ setup = {
            }
            break;
          case "ACK":
-           console.log("Received ACK. Applying game details"); 
+           MetaLog.log("Received ACK. Applying game details"); 
            seed=data.seed
            bufferSize = data.bufferSize
            
@@ -243,7 +276,7 @@ setup = {
              let yoInput = data.input
              loadRollbackState()
    
-             if (yoInput.frame != myInput.frame) console.log("sync error waah",myInput.frame,yoInput.frame)
+             if (yoInput.frame != myInput.frame) MetaLog.log("sync error waah",myInput.frame,yoInput.frame)
    
              processGameLogic(myInput,yoInput)
              storeRollbackState()

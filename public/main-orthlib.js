@@ -43,7 +43,7 @@ var connectStatus = _connectStatus.NotConnected;
 //      .then((accounts) => {
 //      })
 //      .catch((error) => {
-//        console.log(error, error.code);
+//        MetaLog.log(error, error.code);
    
 //      });
 //    }
@@ -88,7 +88,7 @@ function softAddress(fInclude0x = true) {
 // ANY address will show information from the smart contract... may not be revealed through.
 
 function ShowLand(walletAddress, fHome) {
-     //console.log("Show Land for wallet " + walletAddress + " home(1/0) " + fHome + " host(1/0) " + host);
+     //MetaLog.log("Show Land for wallet " + walletAddress + " home(1/0) " + fHome + " host(1/0) " + host);
      _promEthereumGetLandURIFromContract(walletAddress)
      .then(async function (OrthURI) {
           var sImgURL = OrthURI.replace("metadata","img").replace(".json",".png").replace("0x","");
@@ -114,7 +114,7 @@ function ShowLand(walletAddress, fHome) {
 }
 
 // function ShowLand(walletAddress, fHome) {
-//      console.log("Show Land for wallet " + walletAddress + " home(1/0) " + fHome + " host(1/0) " + host);
+//      MetaLog.log("Show Land for wallet " + walletAddress + " home(1/0) " + fHome + " host(1/0) " + host);
 //      var orthoverseJSON = "";
 //      var zero24 = "000000000000000000000000";
 //      var params = [
@@ -133,7 +133,7 @@ function ShowLand(walletAddress, fHome) {
 //           })
 //           .then((result) => {
 //                // Good result returns null in this case
-//                console.log("Good: " +result);
+//                MetaLog.log("Good: " +result);
 //                // Using the decodeURIComponent function in combination with regex to convert the hex value into utf8 value
 //                var sOrthoverseLandInformation = decodeURIComponent(
 //                     result.substr(130).replace(/\s+/g, "").replace(/[0-9a-f]{2}/g, "%$&")
@@ -163,12 +163,12 @@ function ShowLand(walletAddress, fHome) {
 //           })
 //           .catch((error) => {
 //                // If the request fails, the Promise will reject with an error.
-//                console.log("eth_call failed: " +error.message);
+//                MetaLog.log("eth_call failed: " +error.message);
 //           });
 // }
 
 // function LandExists() {
-//      console.log("Check if wallet " + softAddress() + " has Orthoverse land" );
+//      MetaLog.log("Check if wallet " + softAddress() + " has Orthoverse land" );
 //      var orthoverseJSON = "";
 //      var zero24 = "000000000000000000000000";
 //      var params = [
@@ -187,12 +187,12 @@ function ShowLand(walletAddress, fHome) {
 //           })
 //           .then((result) => {
 //                // Good result returns null in this case
-//                console.log("Land exists: " +result);
+//                MetaLog.log("Land exists: " +result);
 //                connectStatus = _connectStatus.Authenticated; 
 //           })
 //           .catch((error) => {
 //                // If the request fails, the Promise will reject with an error.
-//                console.log("eth_call failed: " +error.message);
+//                MetaLog.log("eth_call failed: " +error.message);
 //                connectStatus = _connectStatus.NoLand; 
 //           });
 // }
@@ -245,7 +245,7 @@ function _promEthereumRequestAccounts() {
                resolve();
           })
           .catch((error) => {
-               console.error(error, error.code);
+               MetaLog.error(error, error.code);
                reject();
           });
      });
@@ -269,11 +269,11 @@ function _promEthereumSwitchMainNet() {
                method: 'wallet_switchEthereumChain',
                params,
           }).then((result) => {
-               console.log("Switched to Ethereum MainNet");
+               MetaLog.log("Switched to Ethereum MainNet");
                resolve();
           }).catch((error) => {
                // If the request fails, the Promise will reject with an error.
-               console.log("wallet_switchEthereumChain failed: " +error.message);
+               MetaLog.log("wallet_switchEthereumChain failed: " +error.message);
                reject();
           });
      });
@@ -284,7 +284,7 @@ function _promEthereumSwitchMainNet() {
 // Will return land information even if the user has no tokens!
 function _promEthereumGetLandURIFromContract(walletAddress) {
      return new Promise(function (resolve, reject) {
-          //console.log("Show Land for wallet " + walletAddress );
+          //MetaLog.log("Show Land for wallet " + walletAddress );
           var orthoverseJSON = "";
           var zero24 = "000000000000000000000000";
           var params = [
@@ -303,7 +303,7 @@ function _promEthereumGetLandURIFromContract(walletAddress) {
           })
           .then((result) => {
                // Good result returns null in this case
-               //console.log("Good: " +result);
+               //MetaLog.log("Good: " +result);
                // Using the decodeURIComponent function in combination with regex to convert the hex value into utf8 value
                var sOrthoverseLandInformation = decodeURIComponent(
                     result.substr(130).replace(/\s+/g, "").replace(/[0-9a-f]{2}/g, "%$&")
@@ -314,7 +314,7 @@ function _promEthereumGetLandURIFromContract(walletAddress) {
           })
           .catch((error) => {
                // If the request fails, the Promise will reject with an error.
-               console.error("eth_call failed: " +error.message);
+               MetaLog.error("eth_call failed: " +error.message);
                reject();
           });
      });
@@ -334,7 +334,7 @@ async function GetLandAPI(address0x) {
           //return(datums);
      })
      .catch(function (err) {
-          console.error('Error retrieving Land API', err.statusText);
+          MetaLog.error('Error retrieving Land API', err.statusText);
           result = null;
           //return null;
      });
@@ -371,20 +371,20 @@ async function GetLandAPI(address0x) {
 //           method: 'wallet_switchEthereumChain',
 //           params,
 //      }).then((result) => {
-//           console.log("Switched to Ethereum MainNet");
+//           MetaLog.log("Switched to Ethereum MainNet");
 //      }).catch((error) => {
 //           // If the request fails, the Promise will reject with an error.
-//           console.log("wallet_switchEthereumChain failed: " +error.message);
+//           MetaLog.log("wallet_switchEthereumChain failed: " +error.message);
 //      });
 // }
    
 function RefreshButtonStatus() {
      var check_soon = false;
 
-     console.log("Start button status updates")
+     MetaLog.log("Start button status updates")
 
      if (connectStatus != _connectStatus.Authenticated && connectStatus != _connectStatus.Connecting && connectStatus != _connectStatus.NoLand) {
-               console.log("Do a soft connect since status is " + connectStatus);
+               MetaLog.log("Do a soft connect since status is " + connectStatus);
                softConnect(); // update connected status
      }
 
@@ -443,10 +443,10 @@ function RefreshButtonStatus() {
      }
 
      if (check_soon) {
-          console.log("Setting timeout for 3 seconds to update button status")
+          MetaLog.log("Setting timeout for 3 seconds to update button status")
           window.setTimeout(RefreshButtonStatus,3000);
      } else {
-          console.log("Button status updates will not refresh")
+          MetaLog.log("Button status updates will not refresh")
      }
 
 }

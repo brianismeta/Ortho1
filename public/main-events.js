@@ -7,6 +7,7 @@ function init_and_connect() {
 }
 
 createGameButton.onclick = function() {
+     MetaLog.log("Create Game! :)");
      track_create_game();
 
      //init_and_connect();
@@ -108,9 +109,9 @@ function setBackgroundImage(imgid) {
           // var imageUrl = imgs[imgid*2];//"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
           // var bgElement = document.body;
           // var preloaderImg = document.createElement("img");
-          // console.log("image url is " + imageUrl);
+          // MetaLog.log("image url is " + imageUrl);
           // preloaderImg.addEventListener('load', (event) => {
-          //      console.log("image loaded");
+          //      MetaLog.log("image loaded");
           //      document.body.style.backgroundImage = "url('" + imageUrl + "')";
           //      document.body.style.backgroundSize = "cover";
           //      //preloaderImg = null;
@@ -135,6 +136,16 @@ function setBackgroundImage(imgid) {
    
 function onloadstuff() {
      RefreshButtonStatus();
+
+
+
+
+     // test code
+     //_promEthereumPersonalSign("test string");
+
+
+
+
      // if (!softConnect()) {
      //      hardConnect();
      //      //window.setTimeout("onloadstuff()",500);
@@ -231,6 +242,8 @@ function xxxapplyLocationToInviteCode() {
 
 // TODO --- resizing window should be a different function, seems like it may reset the game or have other undesired side-effects
 
+var sign_challenge;
+
 window.onload=window.onresize=function(){
      onloadstuff();
      scaleFactor=Math.max(1,w/(window.innerWidth-16),h/(window.innerHeight*0.98))
@@ -272,7 +285,7 @@ window.onload=window.onresize=function(){
 
      document.getElementById("goToOrthoverseButton").addEventListener("click",()=>{
           window.location = "https://orthoverse.io";
-          
+
      });
 
      document.getElementById("connectButton").addEventListener("click", ()=>
@@ -290,7 +303,22 @@ window.onload=window.onresize=function(){
                }
           }
      });
- 
+
+     document.getElementById("challenge1Btn").addEventListener("click", ()=>
+     {
+          sign_challenge = prompt("Enter the message for the Enemy to sign.  After clicking OK, wait for a pop-up message to indicate whether the Enemy has passed verification.","Is it really you?");
+          
+          send({type:"challenge", sign_challenge});
+     });
+
+     document.getElementById("challenge2Btn").addEventListener("click", ()=>
+     {
+          sign_challenge = prompt("Enter the message for the Enemy to sign.  After clicking OK, wait for a pop-up message to indicate whether the Enemy has passed verification.","Is it really you?");
+          
+          send({type:"challenge", sign_challenge});
+     });
+
+
 }
 
 
@@ -323,13 +351,13 @@ function calcHMAC( sInput, sKey ) {
 function PopulateCuveeUsernameAndPassword() {
      var username = (parseInt(Date.now()/1000) + 60*60*24) + ":paddleofdoom";
      var password = calcHMAC(username,"4fa4e982a4b2906b8b5e7be323c6b039014e840bcdc265c12771cd598961eef5");
-     console.log(username);
-     console.log(password);
+     MetaLog.log(username);
+     MetaLog.log(password);
      cuvee_username = username;
      cuvee_password = password;
 
-     console.log("username: " + username);
-     console.log("password: " + password);
+     MetaLog.log("username: " + username);
+     MetaLog.log("password: " + password);
 
 }
 function applyInviteCodeToPeerConfig() {

@@ -99,13 +99,13 @@ function objcopy(o){
         ctx.fillStyle = saveColor;
         if (! one_time_log_game_ended ) { // draw keeps going... how to stop it????
              one_time_log_game_ended = true;
-             console.log("*********************************");
-             console.log("*********************************");
-             console.log("*********************************");
-             console.log("          GAME ENDED!");
-             console.log("*********************************");
-             console.log("*********************************");
-             console.log("*********************************");
+             MetaLog.log("*********************************");
+             MetaLog.log("*********************************");
+             MetaLog.log("*********************************");
+             MetaLog.log("          GAME ENDED!");
+             MetaLog.log("*********************************");
+             MetaLog.log("*********************************");
+             MetaLog.log("*********************************");
         }
      }
      if (frameNumber<88) {
@@ -157,11 +157,11 @@ function objcopy(o){
         hb = 3*pi/4; //5*pi/8;
         if (myangle > lb && myangle < mb) {
              ret= rng()*cntn;
-             //console.log("Fixed angle from " + myangle + " to " + ret);
+             //MetaLog.log("Fixed angle from " + myangle + " to " + ret);
              return ret;// lb;
         } else if (myangle >= mb && myangle < hb) {
              ret= pi - rng()*cntn;
-             //console.log("Fixed angle from " + myangle + " to " + ret);
+             //MetaLog.log("Fixed angle from " + myangle + " to " + ret);
              return ret; //hb;
         }
         lb = 5*pi/4; //11*pi/8;
@@ -169,18 +169,18 @@ function objcopy(o){
         hb = 7*pi/4; //13*pi/8;
         if (myangle > lb && myangle < mb) {
              ret= pi + rng()*cntn;
-             //console.log("Fixed angle from " + myangle + " to " + ret);
+             //MetaLog.log("Fixed angle from " + myangle + " to " + ret);
              return ret;// lb;
         } else if (myangle >= mb && myangle < hb) {
              ret= 2*pi - rng()*cntn;
-             //console.log("Fixed angle from " + myangle + " to " + ret);
+             //MetaLog.log("Fixed angle from " + myangle + " to " + ret);
              return ret; //hb;
         }
         return myangle;
    }
    function resetBall(){
    
-     console.log("Ball reset to center");
+     MetaLog.log("Ball reset to center");
         // check to see if someone won the game
    
    
@@ -194,7 +194,7 @@ function objcopy(o){
         else
              angle+=pi;
         }
-     //console.log("Angle start: " + angle);
+     //MetaLog.log("Angle start: " + angle);
         angle = FixAngle(angle);
      ball.x=w/2
      ball.y=h/2
@@ -265,7 +265,7 @@ function objcopy(o){
    
      myInput = myInputs.shift()
    
-     if (myInput.frame != yoInput.frame) {console.log("SYNC ERROR AHHH", myInput,yoInput); return}
+     if (myInput.frame != yoInput.frame) {MetaLog.log("SYNC ERROR AHHH", myInput,yoInput); return}
    
      processGameLogic(myInput,yoInput)
    
@@ -287,7 +287,7 @@ function objcopy(o){
    
      let now = performance.now()
      if (nextFrame<now) {
-       //console.log('timing disrupted')
+       //MetaLog.log('timing disrupted')
        nextFrame=now
      }
      let delay = nextFrame - now
@@ -331,7 +331,7 @@ function objcopy(o){
          angle = FixAngle(angle);
          ball.hspeed = Math.cos(angle)*ball.speed
          ball.vspeed = Math.sin(angle)*ball.speed
-         //console.log("Angle is now " + angle);
+         //MetaLog.log("Angle is now " + angle);
          ball.x++
        }
        else if (Math.round(ball.x+ballSize/2) == Math.round(right.x-paddleW/2+1) && vcollision(right)) {
@@ -341,7 +341,7 @@ function objcopy(o){
          angle = FixAngle(angle);
          ball.hspeed = Math.cos(angle)*ball.speed
          ball.vspeed = Math.sin(angle)*ball.speed
-         //console.log("Angle is now " + angle);
+         //MetaLog.log("Angle is now " + angle);
          ball.x--
        }
        else if (ball.x-ballSize/2 < left.x+paddleW/2-1 && vcollision(left)) {
@@ -371,7 +371,7 @@ function objcopy(o){
    }
    
    DC.log=function(...e) {
-     console.log(...e)
+     MetaLog.log(...e)
      e[1]=JSON.stringify(e[1])
      document.getElementById("debuglog").innerHTML += e.join(" ")+"\n"
    }

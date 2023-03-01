@@ -133,11 +133,11 @@ Difficulty: <span id=bspl></span><br><input id=ballspeed type=range min=2 max=20
 <div id="textstuff">
      
 <div id="host_wait_guest_ready" class="waitingMessage hiddenMessage"><br>Waiting for other player to Engage...</div>
-<div id="host_can_start" class="waitingMessage hiddenMessage"><br><button id="startBtn" class="centerButtonHorizontally">Start Game</button></div>
+<div id="host_can_start" class="waitingMessage hiddenMessage"><br><button id="startBtn" class="centerButtonHorizontally">Start Game</button><button id="challenge2Btn" class="centerButtonHorizontally">Verify Enemy's Identity</button></div>
 <!--div id="placeholderDiv1" style='visibility:hidden;display:none' class="">&nbsp;</div-->
 <!--button id="placeholderBtn1"  style='visibility:hidden'>Placeholder</button-->
 <div id="guest_wait_host_ready" class="waitingMessage hiddenMessage"><br>Waiting for other player to Start Game...</div>
-<div id="guest_wait_ready" class="waitingMessage hiddenMessage">Press button after all images have loaded...<br><button id="readyBtn" class="centerButtonHorizontally">I'm Ready To Play</button></div>
+<div id="guest_wait_ready" class="waitingMessage hiddenMessage">Press button after all images have loaded...<br><button id="readyBtn" class="centerButtonHorizontally">I'm Ready To Play</button><button id="challenge1Btn" class="centerButtonHorizontally">Verify Enemy's Identity</button></div>
 
 <div id="final_score" class="waitingMessage hiddenMessage">&nbsp;</div>
 
@@ -177,8 +177,10 @@ Difficulty: <span id=bspl></span><br><input id=ballspeed type=range min=2 max=20
 
 <!-- <script src="peerjs.min.js"></script> -->
 <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script> 
+<script src=main-util.js></script>
 <script src=main-base64.js></script>
 <script src=main-sha.js></script>
+<script src=main-verify.js></script>
 <script src=main-DC.js></script>
 <script src="main-game.js"></script>
 <script src="main-orthlib.js"></script>
