@@ -27,13 +27,13 @@ setup = {
      onmessage:function(e) {
         //MetaLog.log("Received peer data: " + JSON.stringify(e));
    
-       let ping, recTime = performance.now()
+       var ping, recTime = performance.now()
        // orig - var data = JSON.parse(e.data)
        var data = e; // JSON.parse(e)
        timePair = {t1:data.tSend, t2:recTime}
    
        if (data.t1) {
-         let t1=data.t1, t2=data.t2, t3=data.tSend, t4 = recTime;
+         var t1=data.t1, t2=data.t2, t3=data.tSend, t4 = recTime;
          ping = t4-t1 - (t3-t2);
          pingStack.push(ping)
          if (pingStack.length>stacksize) pingStack.shift()
@@ -230,7 +230,7 @@ setup = {
              }
            else {
              pingStack.shift() // The first is usually unrepresentative, throw away
-             let halftrip = avg(pingStack)/2
+             var halftrip = avg(pingStack)/2
    
              bufferSize = (bufsize.value=="Auto") ? Math.min(5,Math.ceil(halftrip/frameLength)) : Number(bufsize.value);
              initBuffer()
@@ -272,8 +272,8 @@ setup = {
          case "input":
    
            if (rollbackInputs.length) {
-             let myInput = rollbackInputs.shift()
-             let yoInput = data.input
+             var myInput = rollbackInputs.shift()
+             var yoInput = data.input
              loadRollbackState()
    
              if (yoInput.frame != myInput.frame) MetaLog.log("sync error waah",myInput.frame,yoInput.frame)
@@ -284,7 +284,7 @@ setup = {
              // from here, run the rest of the buffer again
              yoInputLastDir = yoInput.dir
    
-             for (let i=0;i<rollbackInputs.length;i++) {
+             for (var i=0;i<rollbackInputs.length;i++) {
                processGameLogic( rollbackInputs[i], {dir:yoInputLastDir} )
              }
    
@@ -293,9 +293,9 @@ setup = {
            }
            // check/adjust timing
            //input packet contains estimate until next frame
-           let otherNextFrame = recTime -ping/2 + data.delay
-           let frameDifference = (frameNumber-1 -data.input.frame)*frameLength
-           let leadTime = nextFrame - otherNextFrame - frameDifference;
+           var otherNextFrame = recTime -ping/2 + data.delay
+           var frameDifference = (frameNumber-1 -data.input.frame)*frameLength
+           var leadTime = nextFrame - otherNextFrame - frameDifference;
            leadStack.push(leadTime)
            if (leadStack.length>stacksize) leadStack.shift()
    

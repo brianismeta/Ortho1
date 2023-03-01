@@ -166,7 +166,7 @@ function getOrthoverseCastleLevel(index) {
 // };
 
 const isMobile = () => {
-  let check = false;
+  var check = false;
 
   (function (a) {
     if (

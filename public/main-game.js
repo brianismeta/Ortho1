@@ -58,7 +58,7 @@ rightWinner=0;
 ball={x:0,y:-20,speed:0,hspeed:0,vspeed:0}
 
 function objcopy(o){
-     let copy = {}
+     var copy = {}
      for (var a in o) {
        if (o.hasOwnProperty(a)) copy[a] = o[a];
      }
@@ -81,7 +81,7 @@ function objcopy(o){
       
           ctx.fillRect( left.x - paddleW/2, left.y - paddleH/2, paddleW, paddleH)
           ctx.fillRect( right.x - paddleW/2, right.y - paddleH/2, paddleW, paddleH)
-        //   for (let i=13;i<h;i+=27) ctx.fillRect( w/2-5,i, 10,10)
+        //   for (var i=13;i<h;i+=27) ctx.fillRect( w/2-5,i, 10,10)
         //if (connected) requestAnimationFrame(drawInitialGame)
       }
       
@@ -117,12 +117,12 @@ function objcopy(o){
         }
      }
      if (frameNumber<88) {
-       for (let i=0;i<frameNumber/8;i++) ctx.fillRect( w/2-5,13+i*27, 10,10),ctx.fillRect( w/2-5,580-i*27, 10,10)
+       for (var i=0;i<frameNumber/8;i++) ctx.fillRect( w/2-5,13+i*27, 10,10),ctx.fillRect( w/2-5,580-i*27, 10,10)
      } else {
        ctx.fillRect( left.x - paddleW/2, left.y - paddleH/2, paddleW, paddleH)
        ctx.fillRect( right.x - paddleW/2, right.y - paddleH/2, paddleW, paddleH)
        ctx.fillRect( ball.x-ballSize/2,ball.y-ballSize/2, ballSize, ballSize )
-       for (let i=13;i<h;i+=27) ctx.fillRect( w/2-5,i, 10,10)
+       for (var i=13;i<h;i+=27) ctx.fillRect( w/2-5,i, 10,10)
        drawScore(w/2-45,scoreLeft,1)
        drawScore(w/2+55,scoreRight)
      }
@@ -136,7 +136,7 @@ function objcopy(o){
    font.src="data:image/gif;base64,R0lGODlhHgAFAIAB"+btoa("\0\xe8\xe8\xe8\xff\xff")+"/yH5BAEAAAEALAAAAAAeAAUAAAIdhANom+x/WphJWTRp23h7WIEdloUaGWnpozItVQAAOw==";
    
    function drawScore(x,score,alignRight){
-     let t=score.toString(), offset=alignRight?t.length*40:0;
+     var t=score.toString(), offset=alignRight?t.length*40:0;
      for (var c in t) {
        ctx.drawImage(font, (t[c].charCodeAt(0)-0x30)*3, 0, 3,5,x+c*40-offset,20,30,50)
      }
@@ -194,7 +194,7 @@ function objcopy(o){
    
    
      // choose a random angle in a 90deg cone facing one of the players
-     let angle, pi=Math.PI;
+     var angle, pi=Math.PI;
      angle= rng()*pi/2-pi/4;
      if (rng()>0.5) {
         if (angle > 0)
@@ -227,7 +227,7 @@ function objcopy(o){
    }
    function initBuffer(){
      frameNumber = -bufferSize;
-     for (let i=0;i<bufferSize;i++) {
+     for (var i=0;i<bufferSize;i++) {
        myInputs.push( { frame:frameNumber, dir:0 } )
        yoInputs.push( { frame:frameNumber, dir:0 } )
        frameNumber++
@@ -253,7 +253,7 @@ function objcopy(o){
    
    if (gameEnded)
         return;
-     let yoInput,myInput;
+     var yoInput,myInput;
      if (yoInputs.length==0) {
        if (rollbackInputs.length>=10){
          //give up and delay
@@ -287,7 +287,7 @@ function objcopy(o){
    
      // timing drift correction - should this be before or after transmitting?
      if (leadStack.length==stacksize) {
-       let lead = -avg(leadStack)
+       var lead = -avg(leadStack)
        if (lead>driftThreshold) { //we are running fast
           nextFrame += Math.min(lead*driftTrimFactor, frameLength)
        }
@@ -296,18 +296,18 @@ function objcopy(o){
      frameNumber++
      nextFrame += frameLength
    
-     let now = performance.now()
+     var now = performance.now()
      if (nextFrame<now) {
        //MetaLog.log('timing disrupted')
        nextFrame=now
      }
-     let delay = nextFrame - now
+     var delay = nextFrame - now
    
      // send inputs to other
      // if game is ended, we should not need to send inputs
      send({type:"input", input:myinput, delay})
    
-     let framesync = now-lastAnimationFrame-synctick;
+     var framesync = now-lastAnimationFrame-synctick;
      if (framesync<2 || framesync>15) synctick=-4;
      else synctick=0
    
@@ -316,15 +316,15 @@ function objcopy(o){
    
    function processGameLogic(myInput,yoInput){
         // called by processFrame and onmessage
-     let oldlefty=left.y, oldrighty=right.y
+     var oldlefty=left.y, oldrighty=right.y
    
      if (host) { processPlayer(left, myInput); processPlayer(right, yoInput); }
      else      { processPlayer(left, yoInput); processPlayer(right, myInput); }
    
      if (myInput.frame==102) resetBall(); //end of intro animation
    
-     let impulses = Math.ceil(ball.speed), step=1/impulses;
-     for (let i=0;i<impulses;i++) {
+     var impulses = Math.ceil(ball.speed), step=1/impulses;
+     for (var i=0;i<impulses;i++) {
    
        ball.x += ball.hspeed*step;
        ball.y += ball.vspeed*step;
@@ -337,7 +337,7 @@ function objcopy(o){
        if (Math.round(ball.x-ballSize/2) == Math.round(left.x+paddleW/2-1) && vcollision(left)) {
          //reflect based on position
          ball.speed = ball.speed + ball.speedIncrement;
-         let angle = Math.atan2(ball.y-left.y, 15)
+         var angle = Math.atan2(ball.y-left.y, 15)
          // limit angle to within 50 degrees of x-axis.
          angle = FixAngle(angle);
          ball.hspeed = Math.cos(angle)*ball.speed
@@ -347,7 +347,7 @@ function objcopy(o){
        }
        else if (Math.round(ball.x+ballSize/2) == Math.round(right.x-paddleW/2+1) && vcollision(right)) {
          ball.speed = ball.speed + ball.speedIncrement;
-         let angle = Math.atan2(ball.y-right.y, -15)
+         var angle = Math.atan2(ball.y-right.y, -15)
          // limit angle to within 50 degrees of x-axis.
          angle = FixAngle(angle);
          ball.hspeed = Math.cos(angle)*ball.speed
@@ -389,7 +389,7 @@ function objcopy(o){
    
 
    canvas.onmousedown=function(e){
-     let sy = e.pageY
+     var sy = e.pageY
      e.preventDefault()
      e.stopPropagation()
    
@@ -406,15 +406,15 @@ function objcopy(o){
    touches=[];
    canvas.ontouchstart=function(e){
      e.preventDefault()
-     for (let i =e.changedTouches.length;i--;){
-       let t={sy:e.changedTouches[i].pageY}
+     for (var i =e.changedTouches.length;i--;){
+       var t={sy:e.changedTouches[i].pageY}
        touches[e.changedTouches[i].identifier]=t;
      }
    }
    canvas.ontouchmove=function(e){
      e.preventDefault()
-     for (let i=e.changedTouches.length;i--;){
-        let t=touches[e.changedTouches[i].identifier];
+     for (var i=e.changedTouches.length;i--;){
+        var t=touches[e.changedTouches[i].identifier];
         grabY += (e.changedTouches[i].pageY - t.sy)
         t.sy=e.changedTouches[i].pageY;
      }
@@ -440,11 +440,11 @@ needle=50;
 ggrid.strokeStyle="rgba(255,255,255,0.2)"
 function drawgrid(x,y,w,h,linespace,zero){
   ggrid.beginPath()
-  for (let i=x;i<=x+w;i+=linespace) {
+  for (var i=x;i<=x+w;i+=linespace) {
     ggrid.moveTo(i,y)
     ggrid.lineTo(i,y+h)
   }
-  for (let j=y;j<=y+h;j+=linespace) {
+  for (var j=y;j<=y+h;j+=linespace) {
     ggrid.moveTo(x,  j)
     ggrid.lineTo(x+w,j)
   }
@@ -491,8 +491,8 @@ function doStats(t){
     }
   }
 
-  let lead = leadStack.length? avg(leadStack) : 0;
-  let ping = pingStack.length? avg(pingStack) : 0;
+  var lead = leadStack.length? avg(leadStack) : 0;
+  var ping = pingStack.length? avg(pingStack) : 0;
 
   graph.clearRect(needle,0,4,600)
 
@@ -505,7 +505,7 @@ function doStats(t){
 
   if (++needle>=750) needle=50
 
-  let p="ping: " +ping.toFixed(3) + "ms\n"
+  var p="ping: " +ping.toFixed(3) + "ms\n"
        +"lead: " +lead.toFixed(3) + "ms\n"
        +"framesync: "+(nextFrame-t).toFixed(3)+"ms\n"
        +"Display FPS: "+animFrameRate.toFixed(3)
