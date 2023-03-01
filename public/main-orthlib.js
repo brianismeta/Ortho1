@@ -87,6 +87,8 @@ function softAddress(fInclude0x = true) {
 
 // ANY address will show information from the smart contract... may not be revealed through.
 
+var homeLandName = "";
+var awayLandName = "";
 function ShowLand(walletAddress, fHome) {
      //MetaLog.log("Show Land for wallet " + walletAddress + " home(1/0) " + fHome + " host(1/0) " + host);
      _promEthereumGetLandURIFromContract(walletAddress)
@@ -97,12 +99,14 @@ function ShowLand(walletAddress, fHome) {
                if (landname == null) landname = ""; else landname = JSON.parse(landname).name;
                (host?orthoverseHomeLand:orthoverseEnemyLand).innerHTML = "YOUR LAND:<br><img src='" + sImgURL + "' class='img-fluid' /><br>" + landname;
                (host?orthoverseHomeLand:orthoverseEnemyLand).classList.remove("d-none");
+               homeLandName = landname;
           }
           else {
                var landname = await GetLandAPI("0x"+walletAddress);
                if (landname == null) landname = ""; else landname = JSON.parse(landname).name;
                (host?orthoverseEnemyLand:orthoverseHomeLand).innerHTML = "ENEMY LAND:<br><img src='" + sImgURL + "' class='img-fluid' /><br>" + landname;
                (host?orthoverseEnemyLand:orthoverseHomeLand).classList.remove("d-none");
+               awayLandName = landname;
           }
           return true;
      })

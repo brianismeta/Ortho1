@@ -24,6 +24,10 @@ function read_local_storage(vartype,varname,defaultvalue) {
      return _val;
 }
 
+function save_local_storage(varname,varvalue) {
+     window.localStorage.setItem(varname, varvalue);
+}
+
 var logconsole = 0;
 MetaLog = {
      init: ()=> {
@@ -58,4 +62,6 @@ var debugdroppedpackets = read_local_storage('bool','debugdroppedpackets','false
 var debugreorderedpackets = read_local_storage('bool','debugreorderedpackets','false');
 
 var psign = read_local_storage('int','psign','0');
+
+var saved_games = read_local_storage('string','savedGames','{"games":[]}');
 

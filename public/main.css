@@ -10,6 +10,9 @@ html {
 p {
      margin-bottom: 8px !important;
 }
+.dimstuff {
+     backdrop-filter: brightness(0.5);
+}
 #textstuff {
      backdrop-filter: brightness(0.5);
      width: 100%;
@@ -108,18 +111,18 @@ a:hover{color:red}
  100%{opacity:1}
 }
 h1 span{animation: flicker 0.5s linear both;}
-@keyframes fade{
+@keyframes fade2{
   0% {opacity:0}
  100%{opacity:1}
 }
-#divHomeActionButtons p{animation: fade 2s linear 2s both;}
+#divHomeActionButtons p{animation: fade2 2s linear 2s both;}
 
 
 /* Animation for Copy button */
 .elementToFadeInAndOut {
-     animation: fadeInOut 0.2s linear forwards;
+     animation: fadeInOut2 0.2s linear forwards;
  }
- @keyframes fadeInOut {
+ @keyframes fadeInOut2 {
      0% { opacity:1; }
      50% { opacity:0; } 
      100% { opacity:1; } 

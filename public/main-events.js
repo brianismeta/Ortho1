@@ -51,11 +51,14 @@ joinGameButton.onclick = function(){
      scpice.focus()
 }
 
-joinGameButton2.onclick = function(){
+function JoinGameClick() {
      track_guest_join();
      DC.joinRoom(setup);
      ShowLand(softAddress(false),true);
      return false
+}
+joinGameButton2.onclick = function(){
+     JoinGameClick();
 }
 
 codeBtn.onclick = function(){
@@ -265,7 +268,19 @@ window.onload=window.onresize=function(){
      document.getElementById("scpice").addEventListener("change",()=>{
           //alert("change!");
           applyInviteCodeToPeerConfig();
-          
+     });
+     document.getElementById("scpice").addEventListener("input",()=>{
+          if (document.getElementById("scpice").value == "") {
+               document.getElementById("joinGameButton2").classList.add("d-none");
+               document.getElementById("pasteButton").classList.remove("d-none");
+          } else {
+               document.getElementById("joinGameButton2").classList.remove("d-none");
+               document.getElementById("pasteButton").classList.add("d-none");
+          }
+     });
+     document.getElementById("pasteButton").addEventListener("click",()=>{
+          navigator.clipboard.readText().then( (clipText)=>{document.getElementById("scpice").value = clipText});
+          JoinGameClick();
      });
 
      document.getElementById("copyCode").addEventListener("click",()=>{
@@ -318,9 +333,69 @@ window.onload=window.onresize=function(){
           send({type:"challenge", sign_challenge});
      });
 
+     document.getElementById("recordScoreBtn").addEventListener("click", ()=>
+     {
+          var szAlert = awayLandName + " (" + scoreRight + ") at " + homeLandName + " (" + scoreLeft + ") played at " + game_ended_localized_date_string;
+          alert(szAlert);
+
+          var game_object = { 'home': homeLandName,
+               'away': awayLandName,
+               'homeScore': scoreLeft,
+               'awayScore': scoreRight,
+               'played': game_ended_localized_date_string 
+          };
+
+          // get a fresh copy of saved games
+          var saved_games = JSON.parse( read_local_storage('string','savedGames','{"games":[]}') );
+          saved_games.games.push(game_object);
+          save_local_storage("savedGames", JSON.stringify(saved_games));
+
+          updatehistorytable();
+
+
+     });
+
+
+     document.getElementById("viewHistoryBtn").addEventListener("click", ()=>
+     {
+     });
+
+     //recordScoreBtn
+     //viewHistoryBtn
+     updatehistorytable();
 
 }
 
+function updatehistorytable() {
+     // from saved_games to gamehistorytable
+     document.getElementById("gamehistorytable").textContent = "";
+     var saved_games = JSON.parse( read_local_storage('string','savedGames','{"games":[]}') );
+     for (var i=saved_games.games.length-1; i>=0; i--) {
+          // show most current version
+          var gameobj = saved_games.games[i];
+          if (gameobj != null) {
+               // create element that looks like this:
+               //                  <tr><th scope="row">1</th><td>Away</td><td>Home</td><td>Date</td></tr>
+               var tr = document.createElement("tr");
+               var th = document.createElement("th");
+               th.setAttribute('scope','row');
+               //var td = document.createElement("td");
+               th.innerText = (i+1).toString();
+               tr.appendChild(th);
+               //tr.appendChild(td);
+               var td = document.createElement("td");
+               td.innerText = gameobj.away + "(" + gameobj.awayScore + ")";
+               tr.appendChild(td);
+               var td = document.createElement("td");
+               td.innerText = gameobj.home + "(" + gameobj.homeScore + ")";
+               tr.appendChild(td);
+               var td = document.createElement("td");
+               td.innerText = gameobj.played;
+               tr.appendChild(td);
+               document.getElementById("gamehistorytable").appendChild(tr);
+          }
+     }
+}
 
 
 function calcHMAC( sInput, sKey ) {

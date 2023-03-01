@@ -28,7 +28,7 @@ nextFrame=0
 lastAnimationFrame=0;
 synctick=0;
 
-version=230228 // increment whenever the game logic changes
+version=230301 // increment whenever the game logic changes
 
 myInputs=[]
 yoInputs=[]
@@ -106,6 +106,14 @@ function objcopy(o){
              MetaLog.log("*********************************");
              MetaLog.log("*********************************");
              MetaLog.log("*********************************");
+
+          // unhide buttons
+          //recordScoreBtn
+          recordScoreBtn.classList.remove("d-none");
+          viewHistoryBtn.classList.remove("d-none");
+          //viewHistoryBtn
+
+
         }
      }
      if (frameNumber<88) {
@@ -226,7 +234,8 @@ function objcopy(o){
      }
    }
    
-   
+   var game_ended_localized_date_string;
+
    function processFrame(){
    // this is the key game loop -- if game ends, need to break this loop.
    
@@ -238,7 +247,9 @@ function objcopy(o){
              gameEnded = 1;
              rightWinner = 1;
         }
-   }
+        const date = new Date();
+        game_ended_localized_date_string = date.toLocaleString();
+ }
    
    if (gameEnded)
         return;
