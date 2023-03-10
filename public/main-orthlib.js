@@ -43,7 +43,7 @@ var connectStatus = _connectStatus.NotConnected;
 //      .then((accounts) => {
 //      })
 //      .catch((error) => {
-//        MetaLog.log(error, error.code);
+//        MiscUtilities.MetaLog.log(error, error.code);
    
 //      });
 //    }
@@ -90,7 +90,7 @@ function softAddress(fInclude0x = true) {
 var homeLandName = "";
 var awayLandName = "";
 function ShowLand(walletAddress, fHome) {
-     //MetaLog.log("Show Land for wallet " + walletAddress + " home(1/0) " + fHome + " host(1/0) " + host);
+     //MiscUtilities.MetaLog.log("Show Land for wallet " + walletAddress + " home(1/0) " + fHome + " host(1/0) " + host);
      _promEthereumGetLandURIFromContract(walletAddress)
      .then(async function (OrthURI) {
           var sImgURL = OrthURI.replace("metadata","img").replace(".json",".png").replace("0x","");
@@ -118,7 +118,7 @@ function ShowLand(walletAddress, fHome) {
 }
 
 // function ShowLand(walletAddress, fHome) {
-//      MetaLog.log("Show Land for wallet " + walletAddress + " home(1/0) " + fHome + " host(1/0) " + host);
+//      MiscUtilities.MetaLog.log("Show Land for wallet " + walletAddress + " home(1/0) " + fHome + " host(1/0) " + host);
 //      var orthoverseJSON = "";
 //      var zero24 = "000000000000000000000000";
 //      var params = [
@@ -137,7 +137,7 @@ function ShowLand(walletAddress, fHome) {
 //           })
 //           .then((result) => {
 //                // Good result returns null in this case
-//                MetaLog.log("Good: " +result);
+//                MiscUtilities.MetaLog.log("Good: " +result);
 //                // Using the decodeURIComponent function in combination with regex to convert the hex value into utf8 value
 //                var sOrthoverseLandInformation = decodeURIComponent(
 //                     result.substr(130).replace(/\s+/g, "").replace(/[0-9a-f]{2}/g, "%$&")
@@ -167,12 +167,12 @@ function ShowLand(walletAddress, fHome) {
 //           })
 //           .catch((error) => {
 //                // If the request fails, the Promise will reject with an error.
-//                MetaLog.log("eth_call failed: " +error.message);
+//                MiscUtilities.MetaLog.log("eth_call failed: " +error.message);
 //           });
 // }
 
 // function LandExists() {
-//      MetaLog.log("Check if wallet " + softAddress() + " has Orthoverse land" );
+//      MiscUtilities.MetaLog.log("Check if wallet " + softAddress() + " has Orthoverse land" );
 //      var orthoverseJSON = "";
 //      var zero24 = "000000000000000000000000";
 //      var params = [
@@ -191,12 +191,12 @@ function ShowLand(walletAddress, fHome) {
 //           })
 //           .then((result) => {
 //                // Good result returns null in this case
-//                MetaLog.log("Land exists: " +result);
+//                MiscUtilities.MetaLog.log("Land exists: " +result);
 //                connectStatus = _connectStatus.Authenticated; 
 //           })
 //           .catch((error) => {
 //                // If the request fails, the Promise will reject with an error.
-//                MetaLog.log("eth_call failed: " +error.message);
+//                MiscUtilities.MetaLog.log("eth_call failed: " +error.message);
 //                connectStatus = _connectStatus.NoLand; 
 //           });
 // }
@@ -273,11 +273,11 @@ function _promEthereumSwitchMainNet() {
                method: 'wallet_switchEthereumChain',
                params,
           }).then((result) => {
-               MetaLog.log("Switched to Ethereum MainNet");
+               MiscUtilities.MetaLog.log("Switched to Ethereum MainNet");
                resolve();
           }).catch((error) => {
                // If the request fails, the Promise will reject with an error.
-               MetaLog.log("wallet_switchEthereumChain failed: " +error.message);
+               MiscUtilities.MetaLog.log("wallet_switchEthereumChain failed: " +error.message);
                reject();
           });
      });
@@ -288,7 +288,7 @@ function _promEthereumSwitchMainNet() {
 // Will return land information even if the user has no tokens!
 function _promEthereumGetLandURIFromContract(walletAddress) {
      return new Promise(function (resolve, reject) {
-          //MetaLog.log("Show Land for wallet " + walletAddress );
+          //MiscUtilities.MetaLog.log("Show Land for wallet " + walletAddress );
           var orthoverseJSON = "";
           var zero24 = "000000000000000000000000";
           var params = [
@@ -307,7 +307,7 @@ function _promEthereumGetLandURIFromContract(walletAddress) {
           })
           .then((result) => {
                // Good result returns null in this case
-               //MetaLog.log("Good: " +result);
+               //MiscUtilities.MetaLog.log("Good: " +result);
                // Using the decodeURIComponent function in combination with regex to convert the hex value into utf8 value
                var sOrthoverseLandInformation = decodeURIComponent(
                     result.substr(130).replace(/\s+/g, "").replace(/[0-9a-f]{2}/g, "%$&")
@@ -375,20 +375,20 @@ async function GetLandAPI(address0x) {
 //           method: 'wallet_switchEthereumChain',
 //           params,
 //      }).then((result) => {
-//           MetaLog.log("Switched to Ethereum MainNet");
+//           MiscUtilities.MetaLog.log("Switched to Ethereum MainNet");
 //      }).catch((error) => {
 //           // If the request fails, the Promise will reject with an error.
-//           MetaLog.log("wallet_switchEthereumChain failed: " +error.message);
+//           MiscUtilities.MetaLog.log("wallet_switchEthereumChain failed: " +error.message);
 //      });
 // }
    
 function RefreshButtonStatus() {
      var check_soon = false;
 
-     MetaLog.log("Start button status updates")
+     MiscUtilities.MetaLog.log("Start button status updates")
 
      if (connectStatus != _connectStatus.Authenticated && connectStatus != _connectStatus.Connecting && connectStatus != _connectStatus.NoLand) {
-               MetaLog.log("Do a soft connect since status is " + connectStatus);
+               MiscUtilities.MetaLog.log("Do a soft connect since status is " + connectStatus);
                softConnect(); // update connected status
      }
 
@@ -447,10 +447,10 @@ function RefreshButtonStatus() {
      }
 
      if (check_soon) {
-          MetaLog.log("Setting timeout for 3 seconds to update button status")
+          MiscUtilities.MetaLog.log("Setting timeout for 3 seconds to update button status")
           window.setTimeout(RefreshButtonStatus,3000);
      } else {
-          MetaLog.log("Button status updates will not refresh")
+          MiscUtilities.MetaLog.log("Button status updates will not refresh")
      }
 
 }

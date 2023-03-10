@@ -2,9 +2,9 @@
 
 setup = {
      onopen: function(){
-        MetaLog.log("setup.onopen");
-       connected=true;
-       requestAnimationFrame(draw)
+        MiscUtilities.MetaLog.log("setup.onopen");
+       gameItems.connected=true;
+       requestAnimationFrame(drawProxy)
        debuglog.style.display='none';
        divHomeActionButtons.style.display='none';
        divJoinBox.style.display='none';
@@ -14,18 +14,18 @@ setup = {
    
        if (!host) {
         var walletAddress = softAddress(false);
-         send({type:"version", version, walletAddress})
+         send({type:"version", version:gameItems.gameVersion, walletAddress})
        }
      },
      onclose: function(){
-        MetaLog.log("setup.onclose");
-       connected=false;
+        MiscUtilities.MetaLog.log("setup.onclose");
+       gameItems.connected=false;
        debuglog.innerHTML = '[ disconnected &mdash; refresh to play again ]'
        debuglog.style.display='inline-block';
    
      },
      onmessage:function(e) {
-        //MetaLog.log("Received peer data: " + JSON.stringify(e));
+        MiscUtilities.PacketLog.log("Received: " + JSON.stringify(e));
    
        var ping, recTime = performance.now()
        // orig - var data = JSON.parse(e.data)
@@ -36,7 +36,7 @@ setup = {
          var t1=data.t1, t2=data.t2, t3=data.tSend, t4 = recTime;
          ping = t4-t1 - (t3-t2);
          pingStack.push(ping)
-         if (pingStack.length>stacksize) pingStack.shift()
+         if (pingStack.length>gameItems.stacksize) pingStack.shift()
        }
    
        if (data.type) switch (data.type) {
@@ -87,13 +87,13 @@ setup = {
 
          case "version":
    
-          if (data.version != version) {
+          if (data.version != gameItems.gameVersion) {
                if (host) 
-                    send({type:"version", version}) //force the other player to also throw this error
-               if (parseInt(data.version) > parseInt(version)) {
-                    alert("Game Version mismatch.  Please clear your browser cache and restart game (ERROR: your version " + version + " < their version " + data.version + ")");
+                    send({type:"version", version:gameItems.gameVersion}) //force the other player to also throw this error
+               if (parseInt(data.version) > parseInt(gameItems.gameVersion)) {
+                    alert("Game Version mismatch.  Please clear your browser cache and restart game (ERROR: your version " + gameItems.gameVersion + " < their version " + data.version + ")");
                } else {
-                    alert("Game Version mismatch.  (ERROR: your version " + version + " > their version " + data.version + ")");
+                    alert("Game Version mismatch.  (ERROR: your version " + gameItems.gameVersion + " > their version " + data.version + ")");
                }
 
                // DC.dc.close()
@@ -104,26 +104,26 @@ setup = {
              //
              // Receives the wallet address of the GUEST, so can display it on the screen
              //
-             //MetaLog.log("Received Version. Sending SYN");
-             MetaLog.log("Received Version. Sending ACKVERSION"); 
+             //MiscUtilities.MetaLog.log("Received Version. Sending SYN");
+             MiscUtilities.MetaLog.log("Received Version. Sending ACKVERSION"); 
              yourwallet = data.walletAddress;
              ShowLand(yourwallet, false);
              //send({type:"SYN"})
              var imgid = getBackgroundImage();
              var difflevel = document.getElementById("difflevel").value;
              if (difflevel == 1) {
-                  ballStartSpeed = 3;
-                  paddleH=240;
+                  gameItems.ballStartSpeed = 3;
+                  drawItems.paddleH=240;
              } else if (difflevel == 2) {
-                  ballStartSpeed = 5;
-                  paddleH=180;
+                    gameItems.ballStartSpeed = 5;
+                    drawItems.paddleH=180;
              } else if (difflevel ==3) {
-                  ballStartSpeed = 7;
-                  paddleH=120;
+                    gameItems.ballStartSpeed = 7;
+                    drawItems.paddleH=120;
              }
              var walletAddress = softAddress(false);
-             send({type:"ACKVERSION",walletAddress,imgid,ballStartSpeed  })
-             requestAnimationFrame(drawInitialGame);
+             send({type:"ACKVERSION",walletAddress,imgid,ballStartSpeed:gameItems.ballStartSpeed  })
+             requestAnimationFrame(drawInitialGameProxy);
    
              // now show that we are waiting on the GUEST to be READY
              host_can_start.classList.add('hiddenMessage');//.style.display='none';
@@ -138,8 +138,8 @@ setup = {
            }
            break;
         case "ACKVERSION":
-             //MetaLog.log("Received Version. Sending SYN");
-             MetaLog.log("Received ACKVERSION."); 
+             //MiscUtilities.MetaLog.log("Received Version. Sending SYN");
+             MiscUtilities.MetaLog.log("Received ACKVERSION."); 
              //yourwallet = data.walletAddress;
              //ShowLand(yourwallet, false);
              //send({type:"SYN"})
@@ -152,14 +152,14 @@ setup = {
              // Receives the wallet address of the HOST, the IMAGE ID (for the background image)
              // and the 'DIFFICULTY' (e.g. ball speed, paddle size)
              //
-             ballStartSpeed = data.ballStartSpeed
+             gameItems.ballStartSpeed = data.ballStartSpeed
              yourwallet = data.walletAddress;
-             if (ballStartSpeed == 3) {
-                  paddleH = 240;
-             } else if (ballStartSpeed == 5) {
-                  paddleH=180;
-             } else if (ballStartSpeed ==7) {
-                  paddleH=120;
+             if (gameItems.ballStartSpeed == 3) {
+                  drawItems.paddleH = 240;
+             } else if (gameItems.ballStartSpeed == 5) {
+                  drawItems.paddleH=180;
+             } else if (gameItems.ballStartSpeed ==7) {
+                  drawItems.paddleH=120;
              }
        
              //var gamevs = yourwallet + " vs " + mywallet;
@@ -172,7 +172,7 @@ setup = {
                   'event_label': 'background',
                   'value': imgimg
              });
-             requestAnimationFrame(drawInitialGame);
+             requestAnimationFrame(drawInitialGameProxy);
        
              // display difficulty level and webrtc location
 
@@ -193,7 +193,7 @@ setup = {
              //
              // This indicates that the GUEST is READY, and the HOST can now start the game
              //
-             MetaLog.log("Received READY."); // Sending SYN"); 
+             MiscUtilities.MetaLog.log("Received READY."); // Sending SYN"); 
           //    startBtn.style.display = "";
           //    document.getElementById("placeholderDiv1").style.display="";
 
@@ -211,7 +211,7 @@ setup = {
                break;
    
         case "SYN":
-           MetaLog.log("Received SYN. Sending SYNACK"); 
+           MiscUtilities.PacketLog.log("Received SYN. Sending SYNACK"); 
            send({type:"SYNACK"})
              // GUEST RECEIVES SYN SO GAME IS STARTING
              host_can_start.classList.add('hiddenMessage');//.style.display='none';
@@ -224,16 +224,19 @@ setup = {
            break;
          case "SYNACK":
            // repeatedly send start condition to establish average ping time
-           if (pingStack.length < stacksize) {
-             MetaLog.log("Received SYNACK. Sending another SYN.  Ping size is " + pingStack.length); 
+           if (pingStack.length < gameItems.stacksize) {
+             MiscUtilities.PacketLog.log("Received SYNACK. Sending another SYN.  Ping size is " + pingStack.length); 
              send({type:"SYN"})
              }
            else {
              pingStack.shift() // The first is usually unrepresentative, throw away
              var halftrip = avg(pingStack)/2
    
-             bufferSize = (bufsize.value=="Auto") ? Math.min(5,Math.ceil(halftrip/frameLength)) : Number(bufsize.value);
-             initBuffer()
+             // buffer size was a HTML Selection option with values Auto, 1,2,3,4,5,6,7,8,9,10
+             // we have hidden this, and are using 'Auto' all the time.
+//             bufferSize = (bufsize.value=="Auto") ? Math.min(5,Math.ceil(halftrip/frameLength)) : Number(bufsize.value);
+               gameItems.bufferSize = Math.min(5,Math.ceil(halftrip/gameItems.frameLength));
+               initBuffer()
              //ballStartSpeed = Number(ballspeed.value)
         
              
@@ -241,63 +244,63 @@ setup = {
              var imgid = getBackgroundImage();
              var difflevel = document.getElementById("difflevel").value;
              if (difflevel == 1) {
-                  ballStartSpeed = 3;
-                  paddleH=240;
+                  gameItems.ballStartSpeed = 3;
+                  drawItems.paddleH=240;
              } else if (difflevel == 2) {
-                  ballStartSpeed = 5;
-                  paddleH=180;
+                  gameItems.ballStartSpeed = 5;
+                  drawItems.paddleH=180;
              } else if (difflevel ==3) {
-                  ballStartSpeed = 7;
-                  paddleH=120;
+                  gameItems.ballStartSpeed = 7;
+                  drawItems.paddleH=120;
              }
-             MetaLog.log("Received SYNACK. Sending ACK with game details"); 
+             MiscUtilities.PacketLog.log("Received SYNACK. Sending ACK with game details"); 
              var walletAddress = softAddress(false);
    
-             send({type:"ACK", seed, bufferSize, ballStartSpeed, imgid, walletAddress })
+             send({type:"ACK", seed, bufferSize:gameItems.bufferSize, ballStartSpeed:gameItems.ballStartSpeed, imgid, walletAddress })
    
              // wait for half the roundtrip time before starting the first frame
-             nextFrame = performance.now() + halftrip
-             setTimeout(processFrame, nextFrame - performance.now())
+             gameItems.nextFrame = performance.now() + halftrip
+             setTimeout(processFrame, gameItems.nextFrame - performance.now())
            }
            break;
          case "ACK":
-           MetaLog.log("Received ACK. Applying game details"); 
+           MiscUtilities.MetaLog.log("Received ACK. Applying game details"); 
            seed=data.seed
-           bufferSize = data.bufferSize
+           gameItems.bufferSize = data.bufferSize
            
-           nextFrame = performance.now()
+           gameItems.nextFrame = performance.now()
            initBuffer()
            processFrame()
            break;
          case "input":
    
-           if (rollbackInputs.length) {
-             var myInput = rollbackInputs.shift()
+           if (InputStates.rollbackInputs.length) {
+             var myInput = InputStates.rollbackInputs.shift()
              var yoInput = data.input
-             loadRollbackState()
+             InputStates.loadRollbackState()
    
-             if (yoInput.frame != myInput.frame) MetaLog.log("sync error waah",myInput.frame,yoInput.frame)
+             if (yoInput.frame != myInput.frame) MiscUtilities.MetaLog.log("sync error waah",myInput.frame,yoInput.frame)
    
              processGameLogic(myInput,yoInput)
-             storeRollbackState()
+             InputStates.storeRollbackState()
    
              // from here, run the rest of the buffer again
-             yoInputLastDir = yoInput.dir
+             InputStates.yoInputLastDir = yoInput.dir
    
-             for (var i=0;i<rollbackInputs.length;i++) {
-               processGameLogic( rollbackInputs[i], {dir:yoInputLastDir} )
+             for (var i=0;i<InputStates.rollbackInputs.length;i++) {
+               processGameLogic( InputStates.rollbackInputs[i], {dir:InputStates.yoInputLastDir} )
              }
    
            } else {
-             yoInputs.push(data.input)
+             InputStates.yoInputs.push(data.input)
            }
            // check/adjust timing
            //input packet contains estimate until next frame
            var otherNextFrame = recTime -ping/2 + data.delay
-           var frameDifference = (frameNumber-1 -data.input.frame)*frameLength
-           var leadTime = nextFrame - otherNextFrame - frameDifference;
+           var frameDifference = (drawItems.frameNumber-1 -data.input.frame)*gameItems.frameLength
+           var leadTime = gameItems.nextFrame - otherNextFrame - frameDifference;
            leadStack.push(leadTime)
-           if (leadStack.length>stacksize) leadStack.shift()
+           if (leadStack.length>gameItems.stacksize) leadStack.shift()
    
            break;
        }

@@ -1,72 +1,107 @@
-*
-{
-	margin: 0;
-	padding: 0;
-}
 body {
-	font-family: sans-serif;
+    font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
+    background-color: white;
+	min-width: 450px;
 }
-#nav-bar {
-	position: sticky;
-	top: 0;
-	z-index: 10;
-}
-.navbar {
-	background-image: linear-gradient(to right, #a517ba, #5f1782);
-	padding: 0 !important;
-}
-.navbar-nav li {
-	padding: 0 10px;
-}
-.navbar-nav li a {
-	color: #fff !important;
-	font-weight: 600;
-	float: right;
-	text-align: left;
-	
-}
-.fa-bars {
-	color: #fff;
-	font-size: 30px !important;
-}
-.navbar-toggler {
-	outline: none !important;
-}
-/*------------------- banner ------------------- */
-#banner {
-	/*background-image: url("pexels-amine-mayoufi-3069334.jpg");*/ 
-    background-image: linear-gradient(to right, #a517ba, #5f1782);
-    padding-top: 5%;
-	color: #fff;
-    /*background-attachment: scroll;
-    background-size: 10%;*/
 
+h1 {
+    font-size: 1.75em;
 }
-.promo-title {
-font-size: 40px;
-font-weight: 100;
-/* margin-top: 100px; */
-font-family: 'Ubuntu';
-}
-.promo-subtext {
-    font-size: 20px;
-    font-style: italic;
-}
-    .play-btn {
-width: 45px;
-margin: 20px;
-}
-#banner a {
-	color: #fff;
-	text-decoration: none;
-}
-.card-title {
-    color: #000;
 
+h2 {
+    text-align: center;
+    font-size: 4em; 
 }
-.card-text {
-    color: #000;
+
+td {
+    width: 50%;
 }
-.foxgif {
-    width: 20px;
+
+input {
+	margin-bottom: 5px;
+}
+
+a:visited{ 
+	color: blue; 
+}
+
+.display {
+    width: 100%;
+    min-height: 400px;
+    padding-bottom: 20px;
+}
+
+.control {
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+.control-button {
+    width: 100%;
+    min-height: 50px;
+}
+
+.display-box {
+    border: 2px solid black;
+}
+
+.title {
+    vertical-align: top;
+}
+
+.standby {
+    background-color: red;
+}
+
+.go {
+    background-color: green;
+}
+
+.fade {
+    background-color: yellow;
+}
+
+.off {
+    background-color: gray;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.no-display {
+    display: none;
+}
+
+.status {
+    height: 125px;
+    vertical-align: text-top;
+    font-weight: bold;
+    margin-bottom: 10px;
+    border-bottom: 2px solid black;
+    
+}
+
+.message {
+    height: 125px;
+    max-height: 125px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid black;
+    overflow: auto;
+}
+
+.msg-time {
+    color: blue;
+}
+
+.cueMsg {
+    color: orange;
+}
+
+.selfMsg {
+    color: green;
+}
+
+.peerMsg {
+    color: red;
 }

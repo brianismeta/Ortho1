@@ -7,7 +7,7 @@ function init_and_connect() {
 }
 
 createGameButton.onclick = function() {
-     MetaLog.log("Create Game! :)");
+     MiscUtilities.MetaLog.log("Create Game! :)");
      track_create_game();
 
      //init_and_connect();
@@ -112,9 +112,9 @@ function setBackgroundImage(imgid) {
           // var imageUrl = imgs[imgid*2];//"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
           // var bgElement = document.body;
           // var preloaderImg = document.createElement("img");
-          // MetaLog.log("image url is " + imageUrl);
+          // MiscUtilities.MetaLog.log("image url is " + imageUrl);
           // preloaderImg.addEventListener('load', (event) => {
-          //      MetaLog.log("image loaded");
+          //      MiscUtilities.MetaLog.log("image loaded");
           //      document.body.style.backgroundImage = "url('" + imageUrl + "')";
           //      document.body.style.backgroundSize = "cover";
           //      //preloaderImg = null;
@@ -175,29 +175,36 @@ function getConnectIDFromInviteCode() {
 
 var adjustpeerconfig = true;
 
+function SetPeerJSLogging() {
+     if (MiscUtilities.PeerJSLog.IsEnabled()) {
+          PeerInfo.peerconfig.debug = 3;
+     } else {
+          PeerInfo.peerconfig.debug = 0;
+     } 
+}
 
 function setPeerServers_basedOnLocationCode() {
      var location = document.getElementById("location").value;
-     if (adjustpeerconfig) {
+          if (adjustpeerconfig) {
           if (location == 'EU') {
-               peerconfig.config.iceServers[1].urls = eu_turn_server;
-               peerconfig.config.iceServers[1].username = peer_username;
-               peerconfig.config.iceServers[1].credential = peer_password;
+               PeerInfo.peerconfig.config.iceServers[1].urls = PeerInfo.eu_turn_server;
+               PeerInfo.peerconfig.config.iceServers[1].username = PeerInfo.peer_username;
+               PeerInfo.peerconfig.config.iceServers[1].credential = PeerInfo.peer_password;
                //var eu_turn_server = 'turn:eu-0.turn.peerjs.com:3478?transport=tcp';
                //var na_turn_server = 'turn:us-0.turn.peerjs.com:3478?transport=tcp';
                
           } else if (location == 'NA') {
-               peerconfig.config.iceServers[1].urls = na_turn_server;
-               peerconfig.config.iceServers[1].username = peer_username;
-               peerconfig.config.iceServers[1].credential = peer_password;
+               PeerInfo.peerconfig.config.iceServers[1].urls = PeerInfo.na_turn_server;
+               PeerInfo.peerconfig.config.iceServers[1].username = PeerInfo.peer_username;
+               PeerInfo.peerconfig.config.iceServers[1].credential = PeerInfo.peer_password;
           } else if (location == 'CU') {
-               peerconfig.config.iceServers[1].urls = cuvee_server;
+               PeerInfo.peerconfig.config.iceServers[1].urls = PeerInfo.cuvee_server;
                PopulateCuveeUsernameAndPassword();
-               peerconfig.config.iceServers[1].username = cuvee_username;
-               peerconfig.config.iceServers[1].credential = cuvee_password;
+               PeerInfo.peerconfig.config.iceServers[1].username = PeerInfo.cuvee_username;
+               PeerInfo.peerconfig.config.iceServers[1].credential = PeerInfo.cuvee_password;
           }
      }
-
+     SetPeerJSLogging();
 }
 
 function applyLocationToInviteCode() {
@@ -211,37 +218,6 @@ function applyLocationToInviteCode() {
      }
 }
 
-function xxxapplyLocationToInviteCode() {
-     var location = document.getElementById("location").value;
-     //setBackgroundImage(imgid);
-     var guid = document.getElementById("scpicehost");
-     if (guid.value.substr(2,1) == '-') {
-          guid.value = location + '-' + guid.value.substr(3);
-     } else {
-          guid.value = location + '-' + guid.value;
-     }
-     if (adjustpeerconfig) {
-          if (location == 'EU') {
-               peerconfig.config.iceServers[1].urls = eu_turn_server;
-               peerconfig.config.iceServers[1].username = peer_username;
-               peerconfig.config.iceServers[1].credential = peer_password;
-               //var eu_turn_server = 'turn:eu-0.turn.peerjs.com:3478?transport=tcp';
-               //var na_turn_server = 'turn:us-0.turn.peerjs.com:3478?transport=tcp';
-               
-          } else if (location == 'NA') {
-               peerconfig.config.iceServers[1].urls = na_turn_server;
-               peerconfig.config.iceServers[1].username = peer_username;
-               peerconfig.config.iceServers[1].credential = peer_password;
-          } else if (location == 'CU') {
-               peerconfig.config.iceServers[1].urls = cuvee_server;
-               PopulateCuveeUsernameAndPassword();
-               peerconfig.config.iceServers[1].username = cuvee_username;
-               peerconfig.config.iceServers[1].credential = cuvee_password;
-          }
-          // re-connect (?)
-          DC.host(setup);
-     }
-}
 
 // TODO --- resizing window should be a different function, seems like it may reset the game or have other undesired side-effects
 
@@ -249,7 +225,7 @@ var sign_challenge;
 
 window.onload=window.onresize=function(){
      onloadstuff();
-     scaleFactor=Math.max(1,w/(window.innerWidth-16),h/(window.innerHeight*0.98))
+     drawItems.scaleFactor=Math.max(1,drawItems.canvasW/(window.innerWidth-16),drawItems.canvasH/(window.innerHeight*0.98))
      document.getElementById("bkimg").addEventListener("change",()=>{
           //alert("change!");
           if (document.getElementById("bkimg").value != 0 && document.getElementById("bkimg").options[0].value == 0)
@@ -335,20 +311,20 @@ window.onload=window.onresize=function(){
 
      document.getElementById("recordScoreBtn").addEventListener("click", ()=>
      {
-          var szAlert = awayLandName + " (" + scoreRight + ") at " + homeLandName + " (" + scoreLeft + ") played at " + game_ended_localized_date_string;
+          var szAlert = "Recording game score:\n " + awayLandName + " (" + drawItems.scoreRight + ") at " + homeLandName + " (" + drawItems.scoreLeft + ") played at " + game_ended_localized_date_string + "\n\nNOTE: game scores are recorded locally in your browser's storage and may not be permanent.";
           alert(szAlert);
 
           var game_object = { 'home': homeLandName,
                'away': awayLandName,
-               'homeScore': scoreLeft,
-               'awayScore': scoreRight,
+               'homeScore': drawItems.scoreLeft,
+               'awayScore': drawItems.scoreRight,
                'played': game_ended_localized_date_string 
           };
 
           // get a fresh copy of saved games
-          var saved_games = JSON.parse( read_local_storage('string','savedGames','{"games":[]}') );
+          var saved_games = JSON.parse( MiscUtilities.read_local_storage('string','savedGames','{"games":[]}') );
           saved_games.games.push(game_object);
-          save_local_storage("savedGames", JSON.stringify(saved_games));
+          MiscUtilities.save_local_storage("savedGames", JSON.stringify(saved_games));
 
           updatehistorytable();
 
@@ -364,12 +340,15 @@ window.onload=window.onresize=function(){
      //viewHistoryBtn
      updatehistorytable();
 
+     if (false)
+     initSounds();
+
 }
 
 function updatehistorytable() {
      // from saved_games to gamehistorytable
      document.getElementById("gamehistorytable").textContent = "";
-     var saved_games = JSON.parse( read_local_storage('string','savedGames','{"games":[]}') );
+     var saved_games = JSON.parse( MiscUtilities.read_local_storage('string','savedGames','{"games":[]}') );
      for (var i=saved_games.games.length-1; i>=0; i--) {
           // show most current version
           var gameobj = saved_games.games[i];
@@ -426,14 +405,8 @@ function calcHMAC( sInput, sKey ) {
 function PopulateCuveeUsernameAndPassword() {
      var username = (parseInt(Date.now()/1000) + 60*60*24) + ":paddleofdoom";
      var password = calcHMAC(username,"4fa4e982a4b2906b8b5e7be323c6b039014e840bcdc265c12771cd598961eef5");
-     MetaLog.log(username);
-     MetaLog.log(password);
-     cuvee_username = username;
-     cuvee_password = password;
-
-     MetaLog.log("username: " + username);
-     MetaLog.log("password: " + password);
-
+     PeerInfo.cuvee_username = username;
+     PeerInfo.cuvee_password = password;
 }
 function applyInviteCodeToPeerConfig() {
      if (adjustpeerconfig) {
@@ -445,21 +418,22 @@ function applyInviteCodeToPeerConfig() {
                location = 'US';
           }
           if (location == 'EU') {
-               peerconfig.config.iceServers[1].urls = eu_turn_server;
-               peerconfig.config.iceServers[1].username = peer_username;
-               peerconfig.config.iceServers[1].credential = peer_password;
+               PeerInfo.peerconfig.config.iceServers[1].urls = PeerInfo.eu_turn_server;
+               PeerInfo.peerconfig.config.iceServers[1].username = PeerInfo.peer_username;
+               PeerInfo.peerconfig.config.iceServers[1].credential = PeerInfo.peer_password;
               
           } else if (location == 'NA') {
-               peerconfig.config.iceServers[1].urls = na_turn_server;
-               peerconfig.config.iceServers[1].username = peer_username;
-               peerconfig.config.iceServers[1].credential = peer_password;
+               PeerInfo.peerconfig.config.iceServers[1].urls = PeerInfo.na_turn_server;
+               PeerInfo.peerconfig.config.iceServers[1].username = PeerInfo.peer_username;
+               PeerInfo.peerconfig.config.iceServers[1].credential = PeerInfo.peer_password;
 
           } else if (location == 'CU') {
-               peerconfig.config.iceServers[1].urls = cuvee_server;
+               PeerInfo.peerconfig.config.iceServers[1].urls = PeerInfo.cuvee_server;
                PopulateCuveeUsernameAndPassword();
-               peerconfig.config.iceServers[1].username = cuvee_username;
-               peerconfig.config.iceServers[1].credential = cuvee_password;
+               PeerInfo.peerconfig.config.iceServers[1].username = PeerInfo.cuvee_username;
+               PeerInfo.peerconfig.config.iceServers[1].credential = PeerInfo.cuvee_password;
 
           }
      }
+     SetPeerJSLogging();
 }
