@@ -325,7 +325,12 @@ function processFrame(){
    
      myInput = InputStates.myInputs.shift()
    
-     if (myInput.frame != yoInput.frame) {MiscUtilities.MetaLog.log("SYNC ERROR AHHH", myInput,yoInput); return}
+     if (myInput.frame != yoInput.frame) {
+          MiscUtilities.MetaLog.log("SYNC ERROR AHHH", myInput,yoInput);
+          MiscUtilities.ShowCriticalError("data not in sync", false);
+ 
+          return
+     }
    
      processGameLogic(myInput,yoInput)
    
@@ -437,7 +442,8 @@ function processFrame(){
    DC.log=function(...e) {
      MiscUtilities.MetaLog.log(...e)
      e[1]=JSON.stringify(e[1])
-     document.getElementById("debuglog").innerHTML += e.join(" ")+"\n"
+     MiscUtilities.ShowCriticalError(e.join(" "),true);
+     //document.getElementById("debuglog").innerHTML += e.join(" ")+"\n"
    }
    
 

@@ -7,6 +7,7 @@ function init_and_connect() {
 }
 
 createGameButton.onclick = function() {
+     MiscUtilities.HideCriticalError();
      MiscUtilities.MetaLog.log("Create Game! :)");
      track_create_game();
 
@@ -18,6 +19,8 @@ createGameButton.onclick = function() {
 }
 
 startBtn.onclick = function(){
+     MiscUtilities.HideCriticalError();
+     
      //DC.join( parseInt(conid.value), scpice.value, setup );
      //  document.body.style.backgroundImage="";
      track_start_game();
@@ -31,6 +34,7 @@ startBtn.onclick = function(){
 
 };
 readyBtn.onclick = function(){
+     MiscUtilities.HideCriticalError();
      //DC.join( parseInt(conid.value), scpice.value, setup );
      //  document.body.style.backgroundImage="";
      track_guest_ready();
@@ -45,6 +49,7 @@ readyBtn.onclick = function(){
 };        
    
 joinGameButton.onclick = function(){
+     MiscUtilities.HideCriticalError();
      divJoinBox.style.display='block'
      divHomeActionButtons.style.display='none'
      // conid.value = DC.id ? DC.id:"";
@@ -58,10 +63,12 @@ function JoinGameClick() {
      return false
 }
 joinGameButton2.onclick = function(){
+     MiscUtilities.HideCriticalError();
      JoinGameClick();
 }
 
 codeBtn.onclick = function(){
+     MiscUtilities.HideCriticalError();
      track_guest_code();
 
      bkimg.disabled = true;
@@ -255,11 +262,13 @@ window.onload=window.onresize=function(){
           }
      });
      document.getElementById("pasteButton").addEventListener("click",()=>{
+          MiscUtilities.HideCriticalError();
           navigator.clipboard.readText().then( (clipText)=>{document.getElementById("scpice").value = clipText});
           JoinGameClick();
      });
 
      document.getElementById("copyCode").addEventListener("click",()=>{
+          MiscUtilities.HideCriticalError();
 
           var copyText = document.getElementById("scpicehost");
 
@@ -271,16 +280,19 @@ window.onload=window.onresize=function(){
      });
 
      document.getElementById("switchButton").addEventListener("click",()=>{
+          MiscUtilities.HideCriticalError();
           switchMainNet();
      });
 
      document.getElementById("goToOrthoverseButton").addEventListener("click",()=>{
+          MiscUtilities.HideCriticalError();
           window.location = "https://orthoverse.io";
 
      });
 
      document.getElementById("connectButton").addEventListener("click", ()=>
      {
+          MiscUtilities.HideCriticalError();
           track_click_connect();
  
           if (typeof window.ethereum !== "undefined") {
@@ -297,6 +309,7 @@ window.onload=window.onresize=function(){
 
      document.getElementById("challenge1Btn").addEventListener("click", ()=>
      {
+          MiscUtilities.HideCriticalError();
           sign_challenge = prompt("Enter the message for the Enemy to sign.  After clicking OK, wait for a pop-up message to indicate whether the Enemy has passed verification.","Is it really you?");
           
           send({type:"challenge", sign_challenge});
@@ -304,6 +317,7 @@ window.onload=window.onresize=function(){
 
      document.getElementById("challenge2Btn").addEventListener("click", ()=>
      {
+          MiscUtilities.HideCriticalError();
           sign_challenge = prompt("Enter the message for the Enemy to sign.  After clicking OK, wait for a pop-up message to indicate whether the Enemy has passed verification.","Is it really you?");
           
           send({type:"challenge", sign_challenge});
@@ -311,6 +325,7 @@ window.onload=window.onresize=function(){
 
      document.getElementById("recordScoreBtn").addEventListener("click", ()=>
      {
+          MiscUtilities.HideCriticalError();
           var szAlert = "Recording game score:\n " + awayLandName + " (" + drawItems.scoreRight + ") at " + homeLandName + " (" + drawItems.scoreLeft + ") played at " + game_ended_localized_date_string + "\n\nNOTE: game scores are recorded locally in your browser's storage and may not be permanent.";
           alert(szAlert);
 

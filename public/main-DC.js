@@ -89,10 +89,11 @@ function createRoom() {
      peer.on('disconnected', function () {
           MiscUtilities.MetaLog.log('[HOST] Create room - peer disconnected');
           MiscUtilities.MetaLog.log('[HOST] Connection lost. Attempting reconnect');
+          MiscUtilities.ShowCriticalError("peer disconnected", false);
 
           // trying workaround from https://github.com/peers/peerjs/issues/650
-          this.disconnectBackoff = 1;
-          this.retrySocketConnection();
+          //this.disconnectBackoff = 1;
+          //this.retrySocketConnection();
 
      });
      peer.on('close', function () {
@@ -103,15 +104,16 @@ function createRoom() {
      peer.on('error', function (err) {
           MiscUtilities.MetaLog.log('[HOST] Create room - peer error: ' + err);
           //addData(err);
+          MiscUtilities.ShowCriticalError(err.message, false);
 
           // trying workaround from https://github.com/peers/peerjs/issues/650
-          this.peer.on('error', (e) => {
-               if (FATAL_ERRORS.includes(e.type)) {
-                 this.reconnectTimeout(e); // this function waits then tries the entire connection over again
-               } else {
-                 MiscUtilities.MetaLog.log('[HOST] Non fatal error: ',  e.type);
-               }
-             });          
+          // this.peer.on('error', (e) => {
+          //      if (FATAL_ERRORS.includes(e.type)) {
+          //        this.reconnectTimeout(e); // this function waits then tries the entire connection over again
+          //      } else {
+          //        MiscUtilities.MetaLog.log('[HOST] Non fatal error: ',  e.type);
+          //      }
+          //    });          
 
      });
 
@@ -134,6 +136,8 @@ function createRoom_ready() {
      conn.on('error', function (errordata) {
           //MiscUtilities.MetaLog.log("Join room -conn data: " + JSON.stringify(data));
           MiscUtilities.MetaLog.log("[HOST] Connection error: " + errordata);
+          MiscUtilities.ShowCriticalError(errordata.message, false);
+
      });
 }
 
@@ -218,6 +222,8 @@ function _joinRoom(setup) {
            conn.on('error', function (errordata) {
                //MiscUtilities.MetaLog.log("Join room -conn data: " + JSON.stringify(data));
                MiscUtilities.MetaLog.log("Connection error: " + errordata);
+               MiscUtilities.ShowCriticalError(errordata.message, false);
+
            });
            conn.on('close', function () {
                MiscUtilities.MetaLog.log("[JOIN] Join room -conn closed... try to rejoin! :)");
@@ -236,10 +242,12 @@ function _joinRoom(setup) {
      peer.on('disconnected', function () {
           MiscUtilities.MetaLog.log('[JOIN] Join room - peer disconnected');
           MiscUtilities.MetaLog.log('[JOIN] Connection lost. Attempting reconnect');
+          MiscUtilities.ShowCriticalError("peer disconnected", false);
 
+         
           // trying workaround from https://github.com/peers/peerjs/issues/650
-          this.disconnectBackoff = 1;
-          this.retrySocketConnection();
+          // this.disconnectBackoff = 1;
+          // this.retrySocketConnection();
 
           if (false) { // original code before workaround above
                // Workaround for peer.reconnect deleting previous id
@@ -252,14 +260,25 @@ function _joinRoom(setup) {
           MiscUtilities.MetaLog.log('[JOIN] Join room - peer error: ' + err);
           //addData(err);
 
+          MiscUtilities.ShowCriticalError(err.message, false);
+
+          // // identify common errors and make them more pretty.
+          // if (err.toUpperCase().startsWith("ERROR: COULD NOT CONNECT TO PEER"))
+          //      MiscUtilities.ShowCriticalError("[ Error: Could not connect to peer ]", false);
+          // else
+          //      MiscUtilities.ShowCriticalError(err, false);
+
+
+
           // trying workaround from https://github.com/peers/peerjs/issues/650
-          this.peer.on('error', (e) => {
-               if (FATAL_ERRORS.includes(e.type)) {
-                 this.reconnectTimeout(e); // this function waits then tries the entire connection over again
-               } else {
-                 MiscUtilities.MetaLog.log('[JOIN] Non fatal error: ',  e.type);
-               }
-             });          
+          // this workaround doesn't work 
+          // peer.on('error', (e) => {
+          //      if (FATAL_ERRORS.includes(e.type)) {
+          //        this.reconnectTimeout(e); // this function waits then tries the entire connection over again
+          //      } else {
+          //        MiscUtilities.MetaLog.log('[JOIN] Non fatal error: ',  e.type);
+          //      }
+          //    });          
      });
      peer.on('close', function () {
           addData("[JOIN] Join room -peer closed");

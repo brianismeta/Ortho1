@@ -5,7 +5,7 @@ setup = {
         MiscUtilities.MetaLog.log("setup.onopen");
        gameItems.connected=true;
        requestAnimationFrame(drawProxy)
-       debuglog.style.display='none';
+       debuglog.style.visibility='hidden';
        divHomeActionButtons.style.display='none';
        divJoinBox.style.display='none';
        divCreateGameOptions.style.display='none';
@@ -20,8 +20,9 @@ setup = {
      onclose: function(){
         MiscUtilities.MetaLog.log("setup.onclose");
        gameItems.connected=false;
-       debuglog.innerHTML = '[ disconnected &mdash; refresh to play again ]'
-       debuglog.style.display='inline-block';
+       MiscUtilities.ShowCriticalError('disconnected - refresh to play again', false);
+     //   debuglog.innerHTML = '[ disconnected &mdash; refresh to play again ]'
+     //   debuglog.style.display='inline-block';
    
      },
      onmessage:function(e) {
@@ -62,7 +63,8 @@ setup = {
                          //return(datums);
                     })
                     .catch(function (err) {
-                         MetaLog.error('Error retrieving Land API', err.statusText);
+                         MetaLog.error('Error occurred during signing', err.statusText);
+                         MiscUtilities.ShowCriticalError("error occurred during signing", false);
                          result = null;
                          //return null;
                     });
@@ -279,8 +281,11 @@ setup = {
              var yoInput = data.input
              InputStates.loadRollbackState()
    
-             if (yoInput.frame != myInput.frame) MiscUtilities.MetaLog.log("sync error waah",myInput.frame,yoInput.frame)
-   
+             if (yoInput.frame != myInput.frame) {
+               MiscUtilities.MetaLog.log("sync error waah",myInput.frame,yoInput.frame);
+               MiscUtilities.ShowCriticalError("data not in sync", false);
+
+             }
              processGameLogic(myInput,yoInput)
              InputStates.storeRollbackState()
    

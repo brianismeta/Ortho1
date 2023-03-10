@@ -67,6 +67,19 @@ const MiscUtilities = {
           }
      },
 
+     ShowCriticalError: function(sMessage,fHtml) {
+          if (fHtml)
+               debuglog.innerHTML = "[ " + sMessage + " ]";
+          else
+               debuglog.innerText = "[ " + sMessage + " ]";
+
+          debuglog.style.visibility='visible';
+     },     
+
+     HideCriticalError: function() {
+          debuglog.innerHTML = ''
+          debuglog.style.visibility='hidden';
+     },     
 
      //dateHelper(new Date()).formatPadded
 

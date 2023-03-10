@@ -29,6 +29,13 @@ div#orthoverseEnemyLand {
      backdrop-filter: brightness(0.5);
 
 }
+
+#debuglog {
+     display: inherit;
+     text-align: center;
+     visibility: hidden;
+}
+
 /* #divCreateGameOptions {
      border: purple solid 3px;
 }
