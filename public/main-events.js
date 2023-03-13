@@ -355,8 +355,8 @@ window.onload=window.onresize=function(){
      //viewHistoryBtn
      updatehistorytable();
 
-     if (false)
-     initSounds();
+     if (MiscUtilities.Sound.IsEnabled())
+          initSounds();
 
 }
 

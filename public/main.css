@@ -30,6 +30,13 @@ div#orthoverseEnemyLand {
 
 }
 
+.modal-body {
+     color:black;
+}
+.leftcontent.modal-body  {
+     text-align: left !important;
+}
+
 #debuglog {
      display: inherit;
      text-align: center;

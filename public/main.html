@@ -19,7 +19,9 @@
      <div id="introtext">
      <p>Challenge another Orthoverse player to an epic game!</p>
      <p>Who will reign supreme? First player to 3 points wins.</p>
-     <p><a href="pp-ortho1.html">Privacy Policy</a>&nbsp;&nbsp;<a href="tos-ortho1.html">Terms of Service</a></p>
+     <p><a href="pp-ortho1.html">Privacy Policy</a>&nbsp;&nbsp;<a href="tos-ortho1.html">Terms of Service</a>
+          <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal" >About</a>
+     </p>
      </div>
      <div id=divHomeActionButtons>
           <p>&nbsp;</p>
@@ -251,7 +253,8 @@
      </div>
    </div>
 
-<div id="photocredit2">
+     
+<div id="photocredit2"></div>
 
 <!-- Modal dialog for showing game results -->
 <!-- Button trigger modal -->
@@ -305,6 +308,46 @@
 <script src="main-orthlib.js?230310"></script>
 <script src="main-events.js?230310"></script>
 <script src="main-message.js?230310"></script>
+
+      <!-- Modal -->
+      <!-- <div class="modal" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            </div>
+          </div>
+        </div> -->
+        <div id="aboutModal" class="modal fade text-center">
+          <!-- <div class="modal-dialog">
+            <div class="modal-content"> -->
+
+               <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">About</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body leftcontent">
+<p>Web3 and the Orthoverse are ready for disruptive fun technology like “Paddle of Doom”.  Now in the bear market, people are looking for distractions away from looking at their investments.  ‘Paddle of Doom’ is now.  LFG.
+</p><p>“Paddle of Doom” is a web3-enabled game based off Pong.  You can play against another player peer-to-peer using the browser’s built-in WebRTC technology, plus PeerJS library and TURN services for convenience.
+</p><p>It started off simply as a proof-of-concept, to show that a community of supporters can build a value-added site to an existing web3-based solution.  
+</p><p>The Orthoverse (orthoverse.io) land token now unlocks a new experience, allowing the token-holder access to a fun community-built game that they can play against other token holders.  This “orthentication” has two steps, one is that Paddle of Doom itself verifies that the player has an Orthoverse land token – two, is that each player can challenge the other player over peer-to-peer communications to sign a message that proves they are who they say they are!
+</p><p>WebRTC is a technology that allows peer-to-peer communication, which typically is in the form of video or voice, but can also be used to send data – in this case WebRTC provides the data channel that the game uses to send paddle movements back and forth, and the javascript keeps the user experience in sync.
+</p><p>The game mechanics is based off an open-source project https://github.com/mitxela/webrtc-pong but then enhanced in too many ways to mention, including migrating to PeerJS for convenience, ending the game after 3 points, wallet integration, and more.  The Paddle of Doom repository is here: https://github.com/brianismeta/Ortho1
+</p><p>PeerJS is a combination of JavaScript library plus back-end signaling/TURN services that assists with keeping ‘Paddle of Doom’ a static HTML/JS/CSS project without any server-side components.  Theoretically the whole site can be hosted on a web file server like IPFS.
+</p><p>Paddle of Doom uses the browser’s built-in window.ethereum object to make calls to interact with the browser’s wallet / blockchain, which keeps the footprint lightweight and not importing large web3 libraries.
+</p><p>Paddle of Doom uses Bootstrap 5 for client-side user interface, and Vercel.app to host the application (site: ortho1.vercel.app) and uses Vercel’s github integration to easily push updates to the web server.
+</p><p>Team / Advisors:
+</p><p>Brian Clink, Technical PM, Certified Blockchain Security Professional, Certified Scrum Master
+</p><p>Traction: 48 new users to ortho1.vercel.app since analytics started on January 22.
+</p><p>Global Reach: Game activity from U.S., Canada, Finland, Spain, U.K., and Thailand.
+</p><p>Roadmap: Create revenue streams from premium features such as minting game results, or minting achievements such as a win streak, a milestone of wins, etc.
+</p><p>Market size: There are 1,934 Orthoverse tokens revealed.
+</p></div>              
+                          </div>
+          </div>
+        </div>
 
 </body>
 </html>

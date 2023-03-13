@@ -398,8 +398,8 @@ function processFrame(){
          drawItems.ball.vspeed = Math.sin(angle)*drawItems.ball.speed
          //MiscUtilities.MetaLog.log("Angle is now " + angle);
          drawItems.ball.x++
-         if (false)
-          arrSounds[adjustBounceSound(drawItems.ball.speed)].play();
+         if (MiscUtilities.Sound.IsEnabled())
+              arrSounds[adjustBounceSound(drawItems.ball.speed)].play();
        }
        else if (Math.round(drawItems.ball.x+drawItems.ballSize/2) == Math.round(drawItems.rightPaddle.x-drawItems.paddleW/2+1) && vcollision(drawItems.rightPaddle)) {
          drawItems.ball.speed = drawItems.ball.speed + drawItems.ball.speedIncrement;
@@ -410,8 +410,8 @@ function processFrame(){
          drawItems.ball.vspeed = Math.sin(angle)*drawItems.ball.speed
          //MiscUtilities.MetaLog.log("Angle is now " + angle);
          drawItems.ball.x--
-         if (false)
-          arrSounds[adjustBounceSound(drawItems.ball.speed)].play();
+         if (MiscUtilities.Sound.IsEnabled())
+              arrSounds[adjustBounceSound(drawItems.ball.speed)].play();
        }
        else if (drawItems.ball.x-drawItems.ballSize/2 < drawItems.leftPaddle.x+drawItems.paddleW/2-1 && vcollision(drawItems.leftPaddle)) {
          drawItems.ball.vspeed = -drawItems.ball.vspeed

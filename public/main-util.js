@@ -53,6 +53,12 @@ const MiscUtilities = {
           }
      },
 
+     Sound: {
+          IsEnabled: function() {
+               return  MiscUtilities.read_local_storage('int','sound','0');
+          }
+     },
+
      PacketLog: {
           logpackets: 0,
           init: function() {
