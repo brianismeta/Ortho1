@@ -249,7 +249,7 @@ function _promEthereumRequestAccounts() {
                resolve();
           })
           .catch((error) => {
-               MetaLog.error(error, error.code);
+               MiscUtilities.MetaLog.error(error, error.code);
                reject();
           });
      });
@@ -318,7 +318,7 @@ function _promEthereumGetLandURIFromContract(walletAddress) {
           })
           .catch((error) => {
                // If the request fails, the Promise will reject with an error.
-               MetaLog.error("eth_call failed: " +error.message);
+               MiscUtilities.MetaLog.error("eth_call failed: " +error.message);
                reject();
           });
      });
@@ -338,7 +338,7 @@ async function GetLandAPI(address0x) {
           //return(datums);
      })
      .catch(function (err) {
-          MetaLog.error('Error retrieving Land API', err.statusText);
+          MiscUtilities.MetaLog.error('Error retrieving Land API', err.statusText);
           result = null;
           //return null;
      });

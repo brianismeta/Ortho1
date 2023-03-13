@@ -15,7 +15,7 @@ function _promEthereumPersonalSign(challenge_string) {
                resolve(response);
           })
           .catch((error) => {
-               MetaLog.error(error, error.code);
+               MiscUtilities.MetaLog.error(error, error.code);
                reject();
           });
      });
@@ -31,7 +31,7 @@ function _promEthereumPersonalVerify(message, hash, account) {
                resolve(response);
           })
           .catch((error) => {
-               MetaLog.error(error, error.code);
+               MiscUtilities.MetaLog.error(error, error.code);
                reject();
           });
      });

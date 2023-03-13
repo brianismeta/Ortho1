@@ -63,7 +63,7 @@ setup = {
                          //return(datums);
                     })
                     .catch(function (err) {
-                         MetaLog.error('Error occurred during signing', err.statusText);
+                         MiscUtilities.MetaLog.error('Error occurred during signing', err.statusText);
                          MiscUtilities.ShowCriticalError("error occurred during signing", false);
                          result = null;
                          //return null;
@@ -90,14 +90,23 @@ setup = {
          case "version":
    
           if (data.version != gameItems.gameVersion) {
-               if (host) 
-                    send({type:"version", version:gameItems.gameVersion}) //force the other player to also throw this error
+
+               yourwallet = data.walletAddress;
+               ShowLand(yourwallet, false);
+
+               if (host) {
+                    var imgid = getBackgroundImage();
+                    var walletAddress = softAddress(false);
+                    send({type:"version", version:gameItems.gameVersion, walletAddress, imgid}) //force the other player to also throw this error
+               } else {
+                    setBackgroundImage(data.imgid);
+               }
                if (parseInt(data.version) > parseInt(gameItems.gameVersion)) {
                     alert("Game Version mismatch.  Please clear your browser cache and restart game (ERROR: your version " + gameItems.gameVersion + " < their version " + data.version + ")");
                } else {
                     alert("Game Version mismatch.  (ERROR: your version " + gameItems.gameVersion + " > their version " + data.version + ")");
                }
-
+  
                // DC.dc.close()
            } 
            else {
