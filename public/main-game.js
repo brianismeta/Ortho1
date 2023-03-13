@@ -16,7 +16,7 @@ const gameItems = {
      lastAnimationFrame:0,
      synctick:0,
 
-     gameVersion:230310, // increment whenever the game logic changes
+     gameVersion:000000, // increment whenever the game logic changes
 
      grabY : 0, //mouse input
 
