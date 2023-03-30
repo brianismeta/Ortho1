@@ -230,7 +230,14 @@ function applyLocationToInviteCode() {
 
 var sign_challenge;
 
-window.onload=window.onresize=function(){
+// BC - resize is different from onload! Need to separate these function!
+
+window.onresize=function() {
+     drawItems.scaleFactor=Math.max(1,drawItems.canvasW/(window.innerWidth-16),drawItems.canvasH/(window.innerHeight*0.98))
+
+}
+
+window.onload=function(){
      onloadstuff();
      drawItems.scaleFactor=Math.max(1,drawItems.canvasW/(window.innerWidth-16),drawItems.canvasH/(window.innerHeight*0.98))
      document.getElementById("bkimg").addEventListener("change",()=>{
@@ -351,6 +358,41 @@ window.onload=window.onresize=function(){
      {
      });
 
+     document.getElementById("btnReactLOL").addEventListener("click", ()=>
+     {
+
+          send({type:"reaction", react: "LOL"});// result = datums;
+          ShowReaction("LOL", host);
+
+
+     });
+
+     document.getElementById("btnReactMAD").addEventListener("click", ()=>
+     {
+
+          send({type:"reaction", react: "MAD"});// result = datums;
+          ShowReaction("MAD", host);
+
+
+     });
+
+     document.getElementById("btnReactCRY").addEventListener("click", ()=>
+     {
+
+          send({type:"reaction", react: "CRY"});// result = datums;
+          ShowReaction("CRY", host);
+
+
+     });
+     document.getElementById("btnReactDED").addEventListener("click", ()=>
+     {
+
+          send({type:"reaction", react: "DED"});// result = datums;
+          ShowReaction("DED", host);
+
+
+     });
+
      //recordScoreBtn
      //viewHistoryBtn
      updatehistorytable();
@@ -358,8 +400,51 @@ window.onload=window.onresize=function(){
      if (MiscUtilities.Sound.IsEnabled())
           initSounds();
 
+
 }
 
+function ShowReaction(reaction, host) {
+     if (reaction == "LOL") {
+          var div = document.createElement('div');
+          div.innerHTML = '<img src="images/LOL-64px.png">';
+          if (host)
+               div.className = 'flyingreactionshost';
+          else
+               div.className = 'flyingreactionsguest';
+
+          document.body.appendChild(div);
+     }
+     if (reaction == "MAD") {
+          var div = document.createElement('div');
+          div.innerHTML = '<img src="images/MAD-64px.png">';
+          if (host)
+               div.className = 'flyingreactionshost';
+          else
+               div.className = 'flyingreactionsguest';
+
+          document.body.appendChild(div);
+     }
+     if (reaction == "CRY") {
+          var div = document.createElement('div');
+          div.innerHTML = '<img src="images/CRY-64px.png">';
+          if (host)
+               div.className = 'flyingreactionshost';
+          else
+               div.className = 'flyingreactionsguest';
+
+          document.body.appendChild(div);
+     }
+     if (reaction == "DED") {
+          var div = document.createElement('div');
+          div.innerHTML = '<img src="images/DED-64px.png">';
+          if (host)
+               div.className = 'flyingreactionshost';
+          else
+               div.className = 'flyingreactionsguest';
+
+          document.body.appendChild(div);
+     }
+}
 function updatehistorytable() {
      // from saved_games to gamehistorytable
      document.getElementById("gamehistorytable").textContent = "";

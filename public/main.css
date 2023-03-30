@@ -144,3 +144,95 @@ h1 span{animation: flicker 0.5s linear both;}
      50% { opacity:0; } 
      100% { opacity:1; } 
     }
+
+
+.flyingreactions {
+	pointer-events: none;
+}
+
+.flyingreactionshost > * {
+/* Adjust animation duration to change the element’s speed */
+        animation: flythisreactionhost 2s linear;
+         /* infinite; */
+        pointer-events: none !important;
+	top: 0;
+	left: 0;
+	transform: translateX(50vw) translateX(-160px) translateY(500px) rotateZ(0);
+	position: fixed;
+	animation-delay: 1s;
+	z-index: 999999;
+     opacity:0;
+}
+
+.flyingreactionsguest > * {
+     /* Adjust animation duration to change the element’s speed */
+             animation: flythisreactionguest 2s linear;
+              /* infinite; */
+             pointer-events: none !important;
+          top: 0;
+          left: 0;
+          transform:  translateX(50vw) translateX(-160px)  translateY(500px) rotateZ(0);
+          position: fixed;
+          animation-delay: 1s;
+          z-index: 999999;
+          opacity:0;
+     }
+     
+ /* Keyframe values control where the element will begin
+    and end its trajectory across the screen. Each rule
+    represents a path the element follows across the screen. */
+
+    @keyframes flythisreactionhost {
+
+	0% {display: block; transform: translateX(50vw) translateX(-160px) translateY(500px) rotate(0deg); opacity:0} 
+          /* rotateZ(0deg) */
+     10% {display: block; transform: translateX(50vw) translateX(-160px)  translateY(470px) rotate(25deg)  } 
+     20% {display: block; transform: translateX(50vw) translateX(-160px)  translateY(440px) rotate(0deg) ; } 
+     30% {display: block; transform: translateX(50vw) translateX(-160px)  translateY(410px) rotate(-25deg);opacity:0.5  } 
+     40% {display: block; transform: translateX(50vw) translateX(-160px) translateY(380px) rotate(0deg);  } 
+     50% {display: block; transform: translateX(50vw) translateX(-160px)  translateY(350px) rotate(25deg) } 
+     60% {display: block; transform: translateX(50vw) translateX(-160px)  translateY(320px) rotate(0deg) } 
+     70% {display: block; transform: translateX(50vw) translateX(-160px)  translateY(290px) rotate(-25deg); } 
+     80% {display: block; transform: translateX(50vw) translateX(-160px)  translateY(260px) rotate(0deg) ; opacity:0.6} 
+     90% {display: block; transform: translateX(50vw) translateX(-160px)  translateY(230px) rotate(25deg) } 
+     100% {display: block; transform: translateX(50vw) translateX(-160px) translateY(200px) rotate(0deg) ; opacity:0} 
+         
+
+     /* 100% {
+		transform: translateX(50vw) translateX(+96px) translateY(0vh) rotate(360deg)
+           rotateZ(0deg)
+	}
+
+	100% {
+		transform: translateX(50vw) translateX(+96px) translateY(0vh) rotate(360deg)
+           rotateZ(0deg)
+	} */
+
+}    
+@keyframes flythisreactionguest {
+
+	0% {display: block; transform: translateX(50vw) translateX(+96px) translateY(500px) rotate(0deg); opacity:0} 
+          /* rotateZ(0deg) */
+     10% {display: block; transform: translateX(50vw) translateX(+96px)  translateY(470px) rotate(25deg)  } 
+     20% {display: block; transform: translateX(50vw) translateX(+96px)  translateY(440px) rotate(0deg) ; } 
+     30% {display: block; transform: translateX(50vw) translateX(+96px)  translateY(410px) rotate(-25deg);opacity:0.5  } 
+     40% {display: block; transform: translateX(50vw) translateX(+96px) translateY(380px) rotate(0deg);  } 
+     50% {display: block; transform: translateX(50vw) translateX(+96px)  translateY(350px) rotate(25deg) } 
+     60% {display: block; transform: translateX(50vw) translateX(+96px)  translateY(320px) rotate(0deg) } 
+     70% {display: block; transform: translateX(50vw) translateX(+96px)  translateY(290px) rotate(-25deg); } 
+     80% {display: block; transform: translateX(50vw) translateX(+96px)  translateY(260px) rotate(0deg) ; opacity:0.6} 
+     90% {display: block; transform: translateX(50vw) translateX(+96px)  translateY(230px) rotate(25deg) } 
+     100% {display: block; transform: translateX(50vw) translateX(+96px) translateY(200px) rotate(0deg) ; opacity:0} 
+         
+
+     /* 100% {
+		transform: translateX(50vw) translateX(+96px) translateY(0vh) rotate(360deg)
+           rotateZ(0deg)
+	}
+
+	100% {
+		transform: translateX(50vw) translateX(+96px) translateY(0vh) rotate(360deg)
+           rotateZ(0deg)
+	} */
+
+}    

@@ -10,6 +10,10 @@ setup = {
        divJoinBox.style.display='none';
        divCreateGameOptions.style.display='none';
        divGameInfo.style.display='block';
+       document.getElementById("reactionbuttonbar").classList.remove("d-none");
+       if (!host)
+          document.getElementById("reactionbuttonbar").classList.add("justify-content-end");
+
        document.getElementById("introtext").style.display="none";
    
        if (!host) {
@@ -53,6 +57,13 @@ setup = {
         // ACK sent from HOSTER to JOINER with seed and buffersize
         // game starts
    
+        case "reaction":
+          if (data.react != null) {
+               ShowReaction(data.react, !host);               
+          }
+
+          break;
+
           case "challenge":
 
                if (data.sign_challenge != null) {
